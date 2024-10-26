@@ -1,14 +1,7 @@
 <mat-toolbar color="warn" *ngIf="verificar()">
   <mat-icon>menu</mat-icon>
-  <mat-icon>menu</mat-icon>
   <button mat-button [matMenuTriggerFor]="menuTasas"  *ngIf="validarRol()">Tasas</button>
   <button mat-button [matMenuTriggerFor]="menuSalir">Usuario</button>
-</mat-toolbar>
-
-
-<mat-toolbar color="primary">
-  <mat-icon>menu</mat-icon>
-  <button mat-button [matMenuTriggerFor]="menuTasas">Tasas</button>
 </mat-toolbar>
 
 <mat-menu #menuTasas="matMenu">
