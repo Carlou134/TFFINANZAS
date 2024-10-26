@@ -1,11 +1,18 @@
 import { Routes } from '@angular/router';
-import { TasasComponent } from './component/tasas/tasas.component';
-import { TasasCreaEditaComponent } from './component/tasas/tasas-crea-edita/tasas-crea-edita.component';
+import { LoginComponent } from './component/login/login.component';
 
 export const routes: Routes = [
   {
-    path: 'tasas', component: TasasComponent, children: [
-      { path: 'nuevo', component: TasasCreaEditaComponent}
-    ]
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full'
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'components',
+    loadChildren: () => import('./component/component.module').then((m) => m.ComponentModule)
   }
 ];

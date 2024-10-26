@@ -1,3 +1,11 @@
+<mat-toolbar color="warn" *ngIf="verificar()">
+  <mat-icon>menu</mat-icon>
+  <mat-icon>menu</mat-icon>
+  <button mat-button [matMenuTriggerFor]="menuTasas"  *ngIf="validarRol()">Tasas</button>
+  <button mat-button [matMenuTriggerFor]="menuSalir">Usuario</button>
+</mat-toolbar>
+
+
 <mat-toolbar color="primary">
   <mat-icon>menu</mat-icon>
   <button mat-button [matMenuTriggerFor]="menuTasas">Tasas</button>
@@ -5,14 +13,19 @@
 
 <mat-menu #menuTasas="matMenu">
   <button mat-menu-item routerLink="/tasas">Listar</button>
-
-
   <!-- Agrega más elementos de menú si es necesario -->
 </mat-menu>
 
-<mat-menu #menuIngredientes="matMenu">
-  <button mat-menu-item routerLink="/ingredientes/nuevo">Registrar Socio</button>
-  <button mat-menu-item routerLink="/ingredientes">Listar Socios</button>
+  <!-- Agrega más elementos de menú si es necesario -->
+<mat-menu #menuSalir="matMenu">
+  <button mat-menu-item routerLink="/login" (click)="cerrar()">
+    <mat-icon>logout</mat-icon>
+    <span>Cerrar sesión</span>
+  </button>
+  <button mat-menu-item>
+    Rol:
+    <span>{{ role }}</span>
+  </button>
   <!-- Agrega más elementos de menú si es necesario -->
 </mat-menu>
 

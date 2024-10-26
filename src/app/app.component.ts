@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, PLATFORM_ID, Inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 // Importaciones de Material
@@ -15,7 +15,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
-
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { LoginService } from './service/login.service';
 
 @Component({
   selector: 'app-root',
@@ -36,11 +37,39 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatDatepickerModule,
     MatInputModule,
     MatListModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatSnackBarModule
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'TFFINANZAS';
+  role: string = "";
+
+  constructor(
+    private loginService: LoginService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
+
+  cerrar() {
+    if (isPlatformBrowser(this.platformId)) {
+      sessionStorage.clear();
+    }
+  }
+
+  verificar() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.role = this.loginService.showRole() || '';
+      return this.loginService.verificar();
+    }
+    return false;
+  }
+
+  validarRol() {
+    if (isPlatformBrowser(this.platformId)) {
+      return this.role === 'ADMIN' || this.role === 'USER';
+    }
+    return false;
+  }
 }
