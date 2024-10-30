@@ -1,1 +1,60 @@
-<p>tasas-crea-edita works!</p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container" style="text-align: center">
+      <h2>Registro de Personas</h2>
+      <form [formGroup]="form" (submit)="aceptar()" class="example-form">
+        <mat-form-field class="example-full-width" *ngIf="edicion">
+          <mat-label>codigo</mat-label>
+          <input matInput placeholder="id" formControlName="id" />
+        </mat-form-field>
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Tipo de tasa</mat-label>
+          <mat-select formControlName="tipo_tasa">
+            <mat-option *ngFor="let t of tipoTasas" [value]="t.value">
+              {{t.viewValue}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="obtenerControlCampo('tipo_tasa')?.errors?.['required']">
+            Es obligatorio elegir el tipo de tasa.
+          </mat-error>
+        </mat-form-field>
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Valor</mat-label>
+          <input matInput placeholder="0.0" formControlName="valor_tasa" />
+          <mat-error
+            *ngIf="obtenerControlCampo('valor_tasa')?.errors?.['required']"
+          >
+            El valor de la tasa es obligatorio.
+          </mat-error>
+        </mat-form-field>
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Capitalizacion</mat-label>
+          <mat-select formControlName="periodo_tasa">
+            <mat-option *ngFor="let c of tipoCapitalizacion" [value]="c.value">
+              {{c.viewValue}}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="obtenerControlCampo('periodo_tasa')?.errors?.['required']">
+            Elegir la capitalización es obligatorio.
+          </mat-error>
+        </mat-form-field>
+        <br />
+        <button mat-raised-button color="primary">Aceptar</button>
+        <button mat-raised-button color="warn" routerLink="/components/tasas">
+          Cancelar
+        </button>
+        <p>{{ mensaje }}</p>
+      </form>
+    </div>
+  </body>
+</html>
+

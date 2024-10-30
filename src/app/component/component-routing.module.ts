@@ -9,6 +9,7 @@ const routes: Routes = [
     component: TasasComponent,
     children: [
       { path: 'nuevo', component: TasasCreaEditaComponent },
+      { path: 'tasas/:id', component: TasasCreaEditaComponent },
       // Aquí puedes agregar más rutas hijas si las necesitas
     ]
   }
