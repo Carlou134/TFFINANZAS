@@ -1,5 +1,5 @@
 import { Component, PLATFORM_ID, Inject } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -49,12 +49,14 @@ export class AppComponent {
 
   constructor(
     private loginService: LoginService,
+    public router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   cerrar() {
     if (isPlatformBrowser(this.platformId)) {
       sessionStorage.clear();
+      this.router.navigate(['/login']);
     }
   }
 
