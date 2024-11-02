@@ -29,7 +29,10 @@ import { CarteraService } from '../../../service/cartera.service';
 export class CarteraListarComponent implements OnInit {
   dataSource: MatTableDataSource<Cartera> = new MatTableDataSource();
   displayedColumns: string[] =
-  ['codigo', 'nombre', 'fecha_descuento', 'accion01', 'accion02'];
+  ['codigo', 'usuario', 'banco', 'fecha_descuento', 'tipo_moneda', 'valor_nominal',
+    'valor_portes', 'comision_estudios', 'desembolso_cobranza', 'igv',
+    'valor_neto', 'tcea', 'dias', 'estado',
+    'accion01', 'accion02'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(private tS: CarteraService) {}
 

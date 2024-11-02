@@ -1,3 +1,4 @@
+import { Bancos } from './../../../models/Bancos';
 import { Component, OnInit } from '@angular/core';
 import moment from 'moment'; // Cambia el import de moment
 import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,6 +12,8 @@ import { Cartera } from '../../../models/Cartera';
 import { CarteraService } from '../../../service/cartera.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { Users } from '../../../models/Users';
+import { BancosService } from '../../../service/bancos.service';
 
 @Component({
   selector: 'app-cartera-crea-edita',
@@ -40,13 +43,20 @@ export class CarteraCreaEditaComponent implements OnInit {
   mensaje: string = '';
   id: number = 0;
   edicion: boolean = false;
+  tiposMoneda: { value: string; viewValue: string }[] = [
+    { value: 'SOLES', viewValue: 'SOLES' },
+    { value: 'DOLARES', viewValue: 'DOLARES' },
+  ];
+  listaBancos: Bancos[] = [];
+  idBancoSeleccionado: number = 0;
   minFecha: Date = moment().add(1, 'days').toDate();
 
   constructor(
     private cS: CarteraService,
     private router: Router,
     private formBuilder: FormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private bS: BancosService
   ) {}
 
   ngOnInit(): void {
@@ -57,15 +67,23 @@ export class CarteraCreaEditaComponent implements OnInit {
     });
     this.form = this.formBuilder.group({
       id: ['',],
-      nombre_cartera: ['', Validators.required],
+      bancos: ['', Validators.required],
       fecha_descuento: [null, Validators.required],
+      moneda: ['', Validators.required],
+    });
+    this.bS.list().subscribe((data) => {
+      this.listaBancos = data;
     });
   }
+
   aceptar(): void {
     if (this.form.valid) {
       this.cartera.id = this.form.value.id;
-      this.cartera.nombre_cartera = this.form.value.nombre_cartera;
+      this.cartera.bancos.id = this.form.value.bancos;
       this.cartera.fecha_descuento = this.form.value.fecha_descuento;
+      this.cartera.moneda = this.form.value.moneda;
+
+
       if (this.edicion) {
         this.cS.update(this.cartera).subscribe(() => {
           this.cS.list().subscribe((data) => {
@@ -97,8 +115,9 @@ export class CarteraCreaEditaComponent implements OnInit {
       this.cS.listId(this.id).subscribe((data) => {
         this.form = new FormGroup({
           id: new FormControl(data.id),
-          nombre_cartera: new FormControl(data.nombre_cartera),
+          bancos: new FormControl(data.bancos.id),
           fecha_descuento: new FormControl(data.fecha_descuento),
+          moneda: new FormControl(data.moneda),
         });
       });
     }

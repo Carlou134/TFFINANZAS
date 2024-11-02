@@ -29,10 +29,18 @@
         <td mat-cell *matCellDef="let element"> {{element.id}} </td>
       </ng-container>
 
-      <!-- Name Column -->
-      <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef> Nombre </th>
-        <td mat-cell *matCellDef="let element"> {{element.nombre_cartera}} </td>
+      <ng-container matColumnDef="usuario">
+        <th mat-header-cell *matHeaderCellDef>Pertenece a</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.usuarios.razon_social }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="banco">
+        <th mat-header-cell *matHeaderCellDef>Vendido a</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.bancos.nombre }}
+        </td>
       </ng-container>
 
       <ng-container matColumnDef="fecha_descuento">
@@ -40,6 +48,57 @@
         <td mat-cell *matCellDef="let element">
           {{ element.fecha_descuento | date : "d MMMM y" }}
         </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="tipo_moneda">
+        <th mat-header-cell *matHeaderCellDef> Tipo de Moneda </th>
+        <td mat-cell *matCellDef="let element"> {{element.moneda}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="valor_nominal">
+        <th mat-header-cell *matHeaderCellDef> Valor Nominal </th>
+        <td mat-cell *matCellDef="let element"> {{element.total_valor_nominal}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="valor_portes">
+        <th mat-header-cell *matHeaderCellDef> Portes </th>
+        <td mat-cell *matCellDef="let element"> {{element.total_valor_portes}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="comision_estudios">
+        <th mat-header-cell *matHeaderCellDef> Comision Estudios </th>
+        <td mat-cell *matCellDef="let element"> {{element.total_comision_estudios}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="desembolso_cobranza">
+        <th mat-header-cell *matHeaderCellDef> Desembolso Cobranza </th>
+        <td mat-cell *matCellDef="let element"> {{element.total_desembolso_cobranza}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="igv">
+        <th mat-header-cell *matHeaderCellDef> IGV </th>
+        <td mat-cell *matCellDef="let element"> {{element.total_igv}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="valor_neto">
+        <th mat-header-cell *matHeaderCellDef> Valor Neto </th>
+        <td mat-cell *matCellDef="let element"> {{element.total_valor_neto}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="tcea">
+        <th mat-header-cell *matHeaderCellDef> TCEA </th>
+        <td mat-cell *matCellDef="let element"> {{element.tcea}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="dias">
+        <th mat-header-cell *matHeaderCellDef> DIAS </th>
+        <td mat-cell *matCellDef="let element"> {{element.dias_promedio}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef> ESTADO </th>
+        <td mat-cell *matCellDef="let element"> {{element.estado}} </td>
       </ng-container>
 
       <ng-container matColumnDef="accion01">
