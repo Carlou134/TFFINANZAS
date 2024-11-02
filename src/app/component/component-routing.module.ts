@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { CarteraComponent } from './cartera/cartera.component';
 import { Cartera } from '../models/Cartera';
 import { CarteraCreaEditaComponent } from './cartera/cartera-crea-edita/cartera-crea-edita.component';
+import { BancosComponent } from './bancos/bancos.component';
+import { BancosCreaEditaComponent } from './bancos/bancos-crea-edita/bancos-crea-edita.component';
 
 const routes: Routes = [
   {
@@ -10,7 +12,16 @@ const routes: Routes = [
     component: CarteraComponent,
     children: [
       { path: 'nuevo', component: CarteraCreaEditaComponent },
-      { path: 'tasas/:id', component: CarteraCreaEditaComponent },
+      { path: 'cartera/:id', component: CarteraCreaEditaComponent },
+      // Aquí puedes agregar más rutas hijas si las necesitas
+    ]
+  },
+  {
+    path: 'bancos',
+    component: BancosComponent,
+    children: [
+      { path: 'nuevo', component: BancosCreaEditaComponent },
+      { path: 'bancos/:id', component: BancosCreaEditaComponent },
       // Aquí puedes agregar más rutas hijas si las necesitas
     ]
   }

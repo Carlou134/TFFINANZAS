@@ -1,4 +1,4 @@
-import { Component, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, PLATFORM_ID, Inject, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -43,7 +43,7 @@ import { LoginService } from './service/login.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'TFFINANZAS';
   role: string = "";
 
@@ -53,17 +53,34 @@ export class AppComponent {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
+  ngOnInit() {
+    // Verifica el estado de autenticación al iniciar
+    this.checkAuthStatus();
+  }
+
+  private checkAuthStatus() {
+    if (this.verificar()) {
+      this.role = this.loginService.showRole() || '';
+    } else {
+      this.router.navigate(['/login']);
+    }
+  }
+
   cerrar() {
     if (isPlatformBrowser(this.platformId)) {
       sessionStorage.clear();
+      this.role = "";
       this.router.navigate(['/login']);
     }
   }
 
   verificar() {
     if (isPlatformBrowser(this.platformId)) {
-      this.role = this.loginService.showRole() || '';
-      return this.loginService.verificar();
+      const isValid = this.loginService.verificar();
+      if (isValid) {
+        this.role = this.loginService.showRole() || '';
+      }
+      return isValid;
     }
     return false;
   }

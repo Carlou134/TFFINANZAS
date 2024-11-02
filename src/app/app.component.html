@@ -1,22 +1,20 @@
 <div>
   <mat-toolbar color="warn" *ngIf="verificar()">
     <mat-icon>menu</mat-icon>
-      <!--<button mat-button [matMenuTriggerFor]="menuTasas" *ngIf="validarRol()">Tasas</button>
-    <button mat-button [matMenuTriggerFor]="menuCartera" *ngIf="validarRol()">Cartera</button>-->
+    <button mat-button [matMenuTriggerFor]="menuBancos" *ngIf="validarRol()">Bancos</button>
+      <!--<button mat-button [matMenuTriggerFor]="menuCartera" *ngIf="validarRol()">Cartera</button>-->
     <button mat-button [matMenuTriggerFor]="menuSalir">Usuario</button>
   </mat-toolbar>
 
   <!-- Modifica estas rutas y añade la navegación programática -->
-
-    <!--
-  <mat-menu #menuTasas="matMenu">
-    <button mat-menu-item (click)="router.navigate(['/components/tasas'])">Listar</button>
+  <mat-menu #menuBancos="matMenu">
+    <button mat-menu-item (click)="router.navigate(['/components/bancos'])">Listar</button>
   </mat-menu>
 
   <mat-menu #menuCartera="matMenu">
     <button mat-menu-item (click)="router.navigate(['/components/cartera'])">Listar</button>
   </mat-menu>
--->
+
   <mat-menu #menuSalir="matMenu">
     <button mat-menu-item (click)="cerrar()">
       <mat-icon>logout</mat-icon>
