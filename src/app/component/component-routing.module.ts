@@ -12,6 +12,8 @@ import { DocumentosComponent } from './documentos/documentos.component';
 import { DocumentosCreaEditaComponent } from './documentos/documentos-crea-edita/documentos-crea-edita.component';
 import { UsersComponent } from './users/users.component';
 import { UsersCreaEditaComponent } from './users/users-crea-edita/users-crea-edita.component';
+import { RoleComponent } from './role/role.component';
+import { RoleCreaEditaComponent } from './role/role-crea-edita/role-crea-edita.component';
 
 const routes: Routes = [
   {
@@ -59,6 +61,14 @@ const routes: Routes = [
     children: [
       { path: 'nuevo', component: UsersCreaEditaComponent },
       { path: 'usuarios/:id', component: UsersCreaEditaComponent }
+    ]
+  },
+  {
+    path: 'roles',
+    component: RoleComponent,
+    children: [
+      { path: 'nuevo', component: RoleCreaEditaComponent },
+      { path: 'role/:id', component: RoleCreaEditaComponent }
     ]
   }
   // Aquí puedes agregar más rutas al mismo nivel que tasas
