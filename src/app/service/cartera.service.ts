@@ -66,4 +66,11 @@ export class CarteraService {
       headers: this.getHeaders()
     });
   }
+
+  // En cartera.service.ts
+  listMiCartera() {
+    return this.http.get<Cartera[]>(`${this.url}/listar/carteraporusuario`, {
+      headers: this.getHeaders()
+    });
+  }
 }

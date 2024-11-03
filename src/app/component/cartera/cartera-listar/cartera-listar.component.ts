@@ -37,10 +37,12 @@ export class CarteraListarComponent implements OnInit {
   constructor(private tS: CarteraService) {}
 
   ngOnInit(): void {
-    this.tS.list().subscribe((data) => {
+    // Reemplazar this.tS.list() por this.tS.listMiCartera()
+    this.tS.listMiCartera().subscribe((data) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
     });
+
     this.tS.getList().subscribe((data) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
@@ -48,8 +50,9 @@ export class CarteraListarComponent implements OnInit {
   }
 
   eliminar(id: number) {
-    this.tS.delete(id).subscribe((data) => {
-      this.tS.list().subscribe((data) => {
+    this.tS.delete(id).subscribe(() => {
+      // También actualizar aquí para mantener consistencia
+      this.tS.listMiCartera().subscribe((data) => {
         this.tS.setList(data);
       });
     });
