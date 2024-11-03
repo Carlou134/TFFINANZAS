@@ -8,6 +8,8 @@ import { BancosCreaEditaComponent } from './bancos/bancos-crea-edita/bancos-crea
 import { DeudoresComponent } from './deudores/deudores.component';
 import { DeudoresCreaEditaComponent } from './deudores/deudores-crea-edita/deudores-crea-edita.component';
 import { CarteraDocumentosListarComponent } from './cartera/cartera-documentos-listar/cartera-documentos-listar.component';
+import { DocumentosComponent } from './documentos/documentos.component';
+import { DocumentosCreaEditaComponent } from './documentos/documentos-crea-edita/documentos-crea-edita.component';
 
 const routes: Routes = [
   {
@@ -39,6 +41,14 @@ const routes: Routes = [
       { path: 'nuevo', component: DeudoresCreaEditaComponent },
       { path: 'deudores/:id', component: DeudoresCreaEditaComponent },
       // Aquí puedes agregar más rutas hijas si las necesitas
+    ]
+  },
+  {
+    path: 'documentos/:id',
+    component: DocumentosComponent,
+    children: [
+      { path: 'nuevo', component: DocumentosCreaEditaComponent},
+      { path: 'editardoc/:id', component: DocumentosCreaEditaComponent}
     ]
   }
   // Aquí puedes agregar más rutas al mismo nivel que tasas

@@ -34,9 +34,11 @@
           </mat-card-content>
 
           <mat-card-actions>
-            <button mat-icon-button color="primary" [routerLink]="['/cartera/editar', cartera.id]">
-              <mat-icon>note_add</mat-icon>
-            </button>
+            <button mat-icon-button color="accent"
+            [routerLink]="['/components/documentos', cartera.id]"
+            matTooltip="Ver Documentos">
+            <mat-icon>note_add</mat-icon>
+          </button>
           </mat-card-actions>
         </mat-card>
       </div>
