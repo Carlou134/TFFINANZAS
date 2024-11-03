@@ -30,7 +30,7 @@ import { RoleService } from '../../../service/role.service';
 export class RoleListarComponent {
   dataSource: MatTableDataSource<Role> = new MatTableDataSource();
   displayedColumns: string[] =
-  ['codigo', 'rol', 'usuario', 'accion01', 'accion02'];
+  ['codigo', 'rol', 'usuario', 'accion01'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   constructor(private tS: RoleService) {}
 
@@ -42,14 +42,6 @@ export class RoleListarComponent {
     this.tS.getList().subscribe((data) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
-    });
-  }
-
-  eliminar(id: number) {
-    this.tS.delete(id).subscribe((data) => {
-      this.tS.list().subscribe((data) => {
-        this.tS.setList(data);
-      });
     });
   }
 }

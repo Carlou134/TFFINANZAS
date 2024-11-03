@@ -68,7 +68,7 @@ const routes: Routes = [
     component: RoleComponent,
     children: [
       { path: 'nuevo', component: RoleCreaEditaComponent },
-      { path: 'role/:id', component: RoleCreaEditaComponent }
+      { path: 'roles/:id', component: RoleCreaEditaComponent }
     ]
   }
   // Aquí puedes agregar más rutas al mismo nivel que tasas

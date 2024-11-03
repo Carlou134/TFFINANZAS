@@ -1,1 +1,58 @@
-<p>role-crea-edita works!</p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container" style="text-align: center">
+      <h2>Registro de Roles</h2>
+      <form [formGroup]="form" (submit)="aceptar()" class="example-form">
+        <mat-form-field class="example-full-width" *ngIf="edicion">
+          <mat-label>codigo</mat-label>
+          <input matInput placeholder="id" formControlName="id" />
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>Tipo de Rol</mat-label>
+          <mat-select formControlName="rol">
+            <mat-option *ngFor="let m of tiposRol" [value]="m.value">
+              {{ m.viewValue }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="obtenerControlCampo('rol')?.errors?.['required']"
+          >
+            El rol es obligatorio
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Seleccione Usuario</mat-label>
+          <mat-select
+            [(value)]="idUsuarioSeleccionado"
+            required
+            formControlName="user"
+          >
+            <mat-option *ngFor="let c of listaUsers" [value]="c.id">
+              {{ c.username }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="obtenerControlCampo('user')?.errors?.['required']">
+            El usuario es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <button mat-raised-button color="primary">Aceptar</button>
+        <button mat-raised-button color="warn" type="button" [routerLink]="['/components/roles']">
+          Cancelar
+        </button>
+        <p>{{ mensaje }}</p>
+      </form>
+    </div>
+  </body>
+</html>
+
