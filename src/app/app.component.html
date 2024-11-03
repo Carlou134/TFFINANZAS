@@ -4,6 +4,7 @@
     <button mat-button [matMenuTriggerFor]="menuBancos" *ngIf="validarRol()">Bancos</button>
     <button mat-button [matMenuTriggerFor]="menuDeudores" *ngIf="validarRol()">Deudores</button>
     <button mat-button [matMenuTriggerFor]="menuCartera" *ngIf="validarRol()">Cartera</button>
+    <button mat-button [matMenuTriggerFor]="menuDocumentos" *ngIf="validarRol()">Documentos</button>
     <button mat-button [matMenuTriggerFor]="menuSalir">Usuario</button>
   </mat-toolbar>
 
@@ -18,6 +19,10 @@
 
   <mat-menu #menuCartera="matMenu">
     <button mat-menu-item (click)="router.navigate(['/components/cartera'])">Listar</button>
+  </mat-menu>
+
+  <mat-menu #menuDocumentos="matMenu">
+    <button mat-menu-item (click)="router.navigate(['/components/cartera-documentos'])">Listar</button>
   </mat-menu>
 
   <mat-menu #menuSalir="matMenu">

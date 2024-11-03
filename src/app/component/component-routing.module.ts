@@ -7,6 +7,7 @@ import { BancosComponent } from './bancos/bancos.component';
 import { BancosCreaEditaComponent } from './bancos/bancos-crea-edita/bancos-crea-edita.component';
 import { DeudoresComponent } from './deudores/deudores.component';
 import { DeudoresCreaEditaComponent } from './deudores/deudores-crea-edita/deudores-crea-edita.component';
+import { CarteraDocumentosListarComponent } from './cartera/cartera-documentos-listar/cartera-documentos-listar.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,10 @@ const routes: Routes = [
       { path: 'cartera/:id', component: CarteraCreaEditaComponent },
       // Aquí puedes agregar más rutas hijas si las necesitas
     ]
+  },
+  {
+    path: 'cartera-documentos',
+    component: CarteraDocumentosListarComponent
   },
   {
     path: 'bancos',
