@@ -1,1 +1,117 @@
-<p>users-crea-edita works!</p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container" style="text-align: center">
+      <h2>Registro de Usuarios</h2>
+      <form [formGroup]="form" (submit)="aceptar()" class="example-form">
+        <mat-form-field class="example-full-width" *ngIf="edicion">
+          <mat-label>Codigo</mat-label>
+          <input matInput placeholder="Id" formControlName="id" />
+        </mat-form-field>
+
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Usuario</mat-label>
+          <input matInput placeholder="Username" formControlName="username" />
+          <mat-error
+            *ngIf="obtenerControlCampo('username')?.errors?.['required']"
+          >
+            El username es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'"
+                 formControlName="password"
+                 required>
+          <button mat-icon-button matSuffix
+                  (click)="hidePassword = !hidePassword"
+                  [attr.aria-label]="'Ocultar contraseña'"
+                  [attr.aria-pressed]="hidePassword"
+                  type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="form.controls['password'].errors?.['required']">
+            La contraseña es requerida
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Razon Social</mat-label>
+          <input
+            matInput
+            placeholder="razon_social"
+            formControlName="razon_social"
+          />
+          <mat-error
+            *ngIf="obtenerControlCampo('razon_social')?.errors?.['required']"
+          >
+            La razon social es obligatoria.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>ruc</mat-label>
+          <input
+            matInput
+            placeholder="RUC"
+            formControlName="ruc"
+          />
+          <mat-error
+            *ngIf="obtenerControlCampo('ruc')?.errors?.['required']"
+          >
+            El RUC es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>direccion</mat-label>
+          <input
+            matInput
+            placeholder="direccion"
+            formControlName="direccion"
+          />
+          <mat-error
+            *ngIf="obtenerControlCampo('direccion')?.errors?.['required']"
+          >
+            La direccion es obligatoria.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Correo</mat-label>
+          <input
+            matInput
+            placeholder="email"
+            formControlName="email"
+          />
+          <mat-error
+            *ngIf="obtenerControlCampo('email')?.errors?.['required']"
+          >
+            El email es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <button mat-raised-button color="primary">Aceptar</button>
+        <button mat-raised-button color="warn" routerLink="/components/usuarios">
+          Cancelar
+        </button>
+        <p>{{ mensaje }}</p>
+      </form>
+    </div>
+  </body>
+</html>
+
