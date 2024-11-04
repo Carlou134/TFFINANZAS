@@ -1,1 +1,249 @@
-<p>documentos-crea-edita works!</p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container" style="text-align: center">
+      <h2>Registro de Documento</h2>
+      <form [formGroup]="form" (submit)="aceptar()" class="example-form">
+        <mat-form-field class="example-full-width" *ngIf="edicion">
+          <mat-label>codigo</mat-label>
+          <input matInput placeholder="id" formControlName="id" />
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Seleccione Deudor</mat-label>
+          <mat-select
+            [(value)]="idDeudorSeleccionado"
+            required
+            formControlName="deudor"
+          >
+            <mat-option *ngFor="let c of listaDeudores" [value]="c.id">
+              {{ c.razon_social }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="obtenerControlCampo('deudor')?.errors?.['required']">
+            El deudor es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>Tipo de Documento</mat-label>
+          <mat-select formControlName="tipo">
+            <mat-option *ngFor="let m of tiposDocumento" [value]="m.value">
+              {{ m.viewValue }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="obtenerControlCampo('tipo')?.errors?.['required']"
+          >
+            El tipo de documento es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Numero de Documento</mat-label>
+          <input matInput placeholder="Nro documento" formControlName="numero_documento" />
+          <mat-error
+            *ngIf="obtenerControlCampo('numero_documento')?.errors?.['required']"
+          >
+            El numero de documento es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Valor Nominal</mat-label>
+          <input matInput placeholder="0" formControlName="valor_nominal" />
+          <mat-error
+            *ngIf="obtenerControlCampo('valor_nominal')?.errors?.['required']"
+          >
+            El valor nominal es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Fecha de emisión -->
+        <mat-form-field class="example-full-width">
+          <mat-label>Fecha de emision</mat-label>
+          <input matInput [matDatepicker]="pickerEmision"
+                formControlName="fecha_emision"
+                [min]="minFechaEmision"
+                placeholder="Seleccione una fecha">
+          <mat-datepicker-toggle matSuffix [for]="pickerEmision"></mat-datepicker-toggle>
+          <mat-datepicker #pickerEmision></mat-datepicker>
+          <mat-error *ngIf="obtenerControlCampo('fecha_emision')?.errors?.['required']">
+            La fecha de emision es obligatoria
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+
+        <!-- Fecha de vencimiento -->
+        <mat-form-field class="example-full-width">
+          <mat-label>Fecha de vencimiento</mat-label>
+          <input matInput [matDatepicker]="pickerVencimiento"
+                formControlName="fecha_vencimiento"
+                [min]="minFecha"
+                placeholder="Seleccione una fecha">
+          <mat-datepicker-toggle matSuffix [for]="pickerVencimiento"></mat-datepicker-toggle>
+          <mat-datepicker #pickerVencimiento></mat-datepicker>
+          <mat-error *ngIf="obtenerControlCampo('fecha_vencimiento')?.errors?.['required']">
+            La fecha de vencimiento es obligatoria
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>Tipo de Moneda</mat-label>
+          <mat-select formControlName="moneda">
+            <mat-option *ngFor="let m of tiposMoneda" [value]="m.value">
+              {{ m.viewValue }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="obtenerControlCampo('moneda')?.errors?.['required']"
+          >
+            La moneda es obligatoria.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Tasa efectiva (Para calculo del descuento)</mat-label>
+          <input matInput placeholder="0" formControlName="tasa_descuento" />
+          <mat-error
+            *ngIf="obtenerControlCampo('tasa_descuento')?.errors?.['required']"
+          >
+            La tasa para el descuento es obligatoria.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>Tipo de tasa</mat-label>
+          <mat-select formControlName="tipo_tasa">
+            <mat-option *ngFor="let m of tiposTasa" [value]="m.value">
+              {{ m.viewValue }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="obtenerControlCampo('tipo_tasa')?.errors?.['required']"
+          >
+            El tipo de tasa es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Dias de descuento</mat-label>
+          <input matInput placeholder="0" formControlName="dias_descuento" />
+          <mat-error
+            *ngIf="obtenerControlCampo('dias_descuento')?.errors?.['required']"
+          >
+            Los dias de descuento es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>{{ form.get('tipo_tasa')?.value === 'NOMINAL' ? 'Periodo de capitalización' : 'Tipo tasa efectiva' }}</mat-label>
+          <mat-select formControlName="periodo_capitalizacion">
+            <mat-option *ngFor="let m of tiposCapitalizacion" [value]="m.value">
+              {{ m.viewValue }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="obtenerControlCampo('periodo_capitalizacion')?.errors?.['required']"
+          >
+            {{ form.get('tipo_tasa')?.value === 'NOMINAL' ? 'El tipo de capitalización es obligatorio' : 'El tipo de tasa efectiva es obligatorio' }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>Tasa de Descuento Calculada (%)</mat-label>
+          <input matInput formControlName="tasa_efectiva_calculada" readonly>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>Tipo de tasa efectiva para el descuento</mat-label>
+          <mat-select formControlName="tipo_tasa_efectiva">
+            <mat-option *ngFor="let m of tiposTasaEfectiva" [value]="m.value">
+              {{ m.viewValue }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="obtenerControlCampo('tipo_tasa_efectiva')?.errors?.['required']"
+          >
+            El tipo de tasa es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Portes</mat-label>
+          <input matInput placeholder="0" formControlName="portes" />
+          <mat-error
+            *ngIf="obtenerControlCampo('portes')?.errors?.['required']"
+          >
+            El valor del porte es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Comisión estudios</mat-label>
+          <input matInput placeholder="0" formControlName="comision_estudios" />
+          <mat-error
+            *ngIf="obtenerControlCampo('comision_estudios')?.errors?.['required']"
+          >
+            El valor de la comision es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Comisión desembolso</mat-label>
+          <input matInput placeholder="0" formControlName="comision_desembolso" />
+          <mat-error
+            *ngIf="obtenerControlCampo('comision_desembolso')?.errors?.['required']"
+          >
+            El valor de la comision es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Comisión cobranza</mat-label>
+          <input matInput placeholder="0" formControlName="comision_cobranza" />
+          <mat-error
+            *ngIf="obtenerControlCampo('comision_cobranza')?.errors?.['required']"
+          >
+            El valor de la comision es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>IGV</mat-label>
+          <input matInput formControlName="igv" readonly>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Valor Neto</mat-label>
+          <input matInput formControlName="valor_neto" readonly>
+        </mat-form-field>
+
+        <br />
+        <button mat-raised-button color="primary">Aceptar</button>
+        <button mat-raised-button color="warn" type="button" [routerLink]="['/components/documentos']">
+          Cancelar
+        </button>
+        <p>{{ mensaje }}</p>
+      </form>
+    </div>
+  </body>
+</html>
+
