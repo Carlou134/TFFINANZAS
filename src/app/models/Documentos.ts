@@ -13,7 +13,7 @@ export class Documentos {
   moneda: string = ""
   valor_tasa: number = 0.0
   tipo_tasa: string = ""
-  dias_descuento: number = 0
+  dias_tasa: string = ""
   periodo_capitalizacion: string = ""
   //Sistema
   tasa_efectiva_calculada: number = 0.0
@@ -24,6 +24,7 @@ export class Documentos {
   comision_cobranza: number = 0.0
   //Sistema
   igv: number = 0.0
+  dias_descuento: number = 0
   tasa_descuento: number = 0.0
   //Sistema
   valor_neto: number = 0.0

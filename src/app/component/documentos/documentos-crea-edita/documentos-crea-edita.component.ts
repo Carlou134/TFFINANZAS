@@ -56,13 +56,21 @@ export class DocumentosCreaEditaComponent implements OnInit {
   ];
   tiposTasaEfectiva: { value: string; viewValue: string }[] = [
     { value: 'DIARIA', viewValue: 'DIARIA' },
+    { value: 'QUINCENAL', viewValue: 'QUINCENAL' },
     { value: 'MENSUAL', viewValue: 'MENSUAL' },
+    { value: '45DIAS', viewValue: '45DIAS' },
+    { value: 'BIMESTRAL', viewValue: 'BIMESTRAL' },
+    { value: 'TRIMESTRAL', viewValue: 'TRIMESTRAL' },
+    { value: 'CUATRIMESTRAL', viewValue: 'CUATRIMESTRAL' },
+    { value: 'SEMESTRAL', viewValue: 'SEMESTRAL' },
     { value: 'ANUAL', viewValue: 'ANUAL' },
   ];
   tiposCapitalizacion: { value: string; viewValue: string }[] = [
+    { value: '', viewValue: '--SELECCIONE--' },
     { value: 'DIARIA', viewValue: 'DIARIA' },
     { value: 'QUINCENAL', viewValue: 'QUINCENAL' },
     { value: 'MENSUAL', viewValue: 'MENSUAL' },
+    { value: '45DIAS', viewValue: '45DIAS' },
     { value: 'BIMESTRAL', viewValue: 'BIMESTRAL' },
     { value: 'TRIMESTRAL', viewValue: 'TRIMESTRAL' },
     { value: 'CUATRIMESTRAL', viewValue: 'CUATRIMESTRAL' },
@@ -85,14 +93,15 @@ export class DocumentosCreaEditaComponent implements OnInit {
 
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
-      this.cartera_id = +params['cartera_id']; // Capturamos el cartera_id de la URL
+      this.cartera_id = +params['cartera_id'];
       this.id = params['id'];
       this.edicion = params['id'] != null;
       this.init();
     });
+
     this.form = this.formBuilder.group({
       id: ['',],
-      cartera: [this.cartera_id], // Asignamos el cartera_id por defecto
+      cartera: [this.cartera_id],
       deudor: ['', Validators.required],
       tipo: ['', Validators.required],
       numero_documento: ['', Validators.required],
@@ -102,36 +111,38 @@ export class DocumentosCreaEditaComponent implements OnInit {
       moneda: ['', Validators.required],
       valor_tasa: ['', Validators.required],
       tipo_tasa: ['', Validators.required],
-      dias_descuento: ['', Validators.required],
-      periodo_capitalizacion: ['', Validators.required],
-      //sistema
-      tasa_efectiva_calculada: [{ value: '', disabled: true }, Validators.required], // Hacemos este campo readonly
+      dias_tasa: ['', Validators.required],
+      periodo_capitalizacion: [{ value: '', disabled: false }],
+      tasa_efectiva_calculada: [{ value: '', disabled: true }, Validators.required],
       tipo_tasa_efectiva: ['', Validators.required],
       portes: ['', Validators.required],
       comision_estudios: ['', Validators.required],
       comision_desembolso: ['', Validators.required],
       comision_cobranza: ['', Validators.required],
-      //Sistema
       igv: [{ value: '', disabled: true }],
+      dias_descuento: ['', Validators.required],
       tasa_descuento: ['', Validators.required],
       valor_neto: [{ value: '', disabled: true }],
       estado: ['', Validators.required],
     });
 
+    // Observador para tipo_tasa
     this.form.get('tipo_tasa')?.valueChanges.subscribe((valor) => {
       const periodoCapControl = this.form.get('periodo_capitalizacion');
 
       if (valor === 'NOMINAL') {
+        periodoCapControl?.enable();
         periodoCapControl?.setValidators([Validators.required]);
       } else {
-        periodoCapControl?.setValidators([Validators.required]); // Mantener los validadores
+        periodoCapControl?.disable();
+        periodoCapControl?.clearValidators();
+        periodoCapControl?.setValue('');
       }
       periodoCapControl?.updateValueAndValidity();
     });
 
-    // Agregar los observables para el cálculo automático
+    // Observadores para cálculos automáticos
     const camposParaObservar = ['tasa_descuento', 'tipo_tasa', 'tipo_tasa_efectiva', 'periodo_capitalizacion'];
-
     camposParaObservar.forEach(campo => {
       this.form.get(campo)?.valueChanges.subscribe(() => {
         this.calcularTasaEfectiva();
@@ -139,7 +150,6 @@ export class DocumentosCreaEditaComponent implements OnInit {
     });
 
     const camposComisiones = ['portes', 'comision_estudios', 'comision_desembolso', 'comision_cobranza'];
-
     camposComisiones.forEach(campo => {
       this.form.get(campo)?.valueChanges.subscribe(() => {
         this.calcularIGV();
@@ -155,11 +165,10 @@ export class DocumentosCreaEditaComponent implements OnInit {
       'comision_cobranza',
       'igv'
     ];
-
     camposParaValorNeto.forEach(campo => {
-        this.form.get(campo)?.valueChanges.subscribe(() => {
-            this.calcularValorNeto();
-        });
+      this.form.get(campo)?.valueChanges.subscribe(() => {
+        this.calcularValorNeto();
+      });
     });
 
     this.bS.list().subscribe((data) => {
@@ -180,7 +189,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
       this.documentos.moneda = this.form.value.moneda;
       this.documentos.valor_tasa = this.form.value.valor_tasa;
       this.documentos.tipo_tasa = this.form.value.tipo_tasa;
-      this.documentos.dias_descuento = this.form.value.dias_descuento;
+      this.documentos.dias_tasa = this.form.value.dias_tasa;
       this.documentos.periodo_capitalizacion = this.form.value.periodo_capitalizacion;
       this.documentos.tasa_efectiva_calculada = this.form.get('tasa_efectiva_calculada')?.value;
       this.documentos.tipo_tasa_efectiva = this.form.value.tipo_tasa_efectiva;
@@ -189,6 +198,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
       this.documentos.comision_desembolso = this.form.value.comision_desembolso;
       this.documentos.comision_cobranza = this.form.value.comision_cobranza;
       this.documentos.igv = this.form.get('igv')?.value;
+      this.documentos.dias_descuento = this.form.value.dias_descuento;
       this.documentos.tasa_descuento = this.form.value.tasa_descuento;
       this.documentos.valor_neto = this.form.get('valor_neto')?.value;
       this.documentos.estado = this.form.value.estado;
@@ -222,9 +232,11 @@ export class DocumentosCreaEditaComponent implements OnInit {
 
   private getDiasSegunPeriodo(periodo: string): number {
     const diasPorPeriodo: { [key: string]: number } = {
+      '': 0,
       'DIARIA': 1,
       'QUINCENAL': 15,
       'MENSUAL': 30,
+      '45DIAS': 45,
       'BIMESTRAL': 60,
       'TRIMESTRAL': 90,
       'CUATRIMESTRAL': 120,
@@ -237,20 +249,26 @@ export class DocumentosCreaEditaComponent implements OnInit {
   private getDiasSegunTipoTasaEfectiva(tipo: string): number {
     const diasPorTipo: { [key: string]: number } = {
       'DIARIA': 1,
+      'QUINCENAL': 15,
       'MENSUAL': 30,
+      '45DIAS': 45,
+      'BIMESTRAL': 60,
+      'TRIMESTRAL': 90,
+      'CUATRIMESTRAL': 120,
+      'SEMESTRAL': 180,
       'ANUAL': 360
     };
     return diasPorTipo[tipo] || 0;
   }
 
   private calcularTasaEfectiva(): void {
-    const tasaDescuento = this.form.get('tasa_descuento')?.value;
+    const tasa = this.form.get('valor_tasa')?.value;
     const tipoTasa = this.form.get('tipo_tasa')?.value;
-    const tipoTasaEfectiva = this.form.get('tipo_tasa_efectiva')?.value;
+    const diasTasa = this.form.get('dias_tasa')?.value;
     const periodoCapitalizacion = this.form.get('periodo_capitalizacion')?.value;
-    const dias_descuento = this.form.get('dias_descuento')?.value;
+    const tipoTasaEfectiva = this.form.get('tipo_tasa_efectiva')?.value;
 
-    if (!tasaDescuento || !tipoTasa || !tipoTasaEfectiva ||
+    if (!tasa || !tipoTasa || !tipoTasaEfectiva ||
         (tipoTasa === 'NOMINAL' && !periodoCapitalizacion)) {
       this.form.patchValue({ tasa_efectiva_calculada: '' }, { emitEvent: false });
       return;
@@ -260,27 +278,24 @@ export class DocumentosCreaEditaComponent implements OnInit {
 
     if (tipoTasa === 'NOMINAL') {
       // Convertir tasa nominal a efectiva usando la fórmula
-      const m = dias_descuento / this.getDiasSegunPeriodo(periodoCapitalizacion); // días de capitalización
+      const m = this.getDiasSegunPeriodo(diasTasa) / this.getDiasSegunPeriodo(periodoCapitalizacion); // días de capitalización
       const n = this.getDiasSegunTipoTasaEfectiva(tipoTasaEfectiva) / this.getDiasSegunPeriodo(periodoCapitalizacion); // días según tipo de tasa efectiva
-      const TN = tasaDescuento / 100; // convertir porcentaje a decimal
+      const TN = tasa / 100; // convertir porcentaje a decimal
 
       tasaEfectiva = (Math.pow((1 + (TN / m)), n) - 1) * 100;
     } else {
       // Si ya es efectiva, solo convertir entre períodos
-      const tasaDecimal = tasaDescuento / 100;
-      const diasOrigen = this.getDiasSegunPeriodo(periodoCapitalizacion);
+      const tasaDecimal = tasa / 100;
+      const diasOrigen = this.getDiasSegunPeriodo(diasTasa);
       const diasDestino = this.getDiasSegunTipoTasaEfectiva(tipoTasaEfectiva);
 
-      tasaEfectiva = ((Math.pow((1 + tasaDecimal), (diasDestino / diasOrigen))) - 1) * 100;
+      if(diasOrigen !== diasDestino) tasaEfectiva = ((Math.pow((1 + tasaDecimal), (diasDestino / diasOrigen))) - 1) * 100;
+      else tasaEfectiva = tasa
     }
 
-    console.log("Tasa Efectiva: ", tasaEfectiva);
-
-    let tasa_descuento_total: number;
-    tasa_descuento_total = ((tasaEfectiva/100)/(1 + (tasaEfectiva/100)));
     // Actualizar el formulario con la tasa calculada (4 decimales)
     this.form.patchValue({
-      tasa_efectiva_calculada: Number(tasa_descuento_total.toFixed(4))
+      tasa_efectiva_calculada: Number(tasaEfectiva.toFixed(4))
     }, { emitEvent: false });
   }
 
@@ -336,7 +351,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
           moneda: new FormControl(data.moneda),
           valor_tasa: new FormControl(data.valor_tasa),
           tipo_tasa: new FormControl(data.tipo_tasa),
-          dias_descuento: new FormControl(data.dias_descuento),
+          dias_tasa: new FormControl(data.dias_tasa),
           periodo_capitalizacion: new FormControl(
             data.periodo_capitalizacion,
             [Validators.required]
@@ -351,6 +366,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
           comision_desembolso: new FormControl(data.comision_desembolso),
           comision_cobranza: new FormControl(data.comision_cobranza),
           igv: new FormControl({ value: data.igv, disabled: true }),
+          dias_descuento: new FormControl(data.dias_descuento),
           tasa_descuento: new FormControl(data.tasa_descuento),
           valor_neto: new FormControl({
             value: data.valor_neto,

@@ -31,6 +31,7 @@
           </mat-error>
         </mat-form-field>
 
+        <br />
         <mat-form-field class="example-full-width">
           <mat-label>Tipo de Documento</mat-label>
           <mat-select formControlName="tipo">
@@ -101,6 +102,7 @@
           </mat-error>
         </mat-form-field>
 
+        <br />
         <mat-form-field class="example-full-width">
           <mat-label>Tipo de Moneda</mat-label>
           <mat-select formControlName="moneda">
@@ -130,6 +132,7 @@
           </mat-error>
         </mat-form-field>
 
+        <br />
         <mat-form-field class="example-full-width">
           <mat-label>Tipo de tasa</mat-label>
           <mat-select formControlName="tipo_tasa">
@@ -146,23 +149,22 @@
 
         <br />
         <mat-form-field class="example-full-width">
-          <mat-label>Dias de descuento</mat-label>
-          <input matInput
-                 type="text"
-                 placeholder="0"
-                 formControlName="dias_descuento"
-                 (keypress)="validarEntero($event)"
-                 (input)="formatearEntero($event, 'dias_descuento')"
-                 (blur)="onBlurEntero($event, 'dias_descuento')"/>
+          <mat-label>{{ form.get('tipo_tasa')?.value === 'NOMINAL' ? 'Tipo tasa nominal' : 'Tipo tasa efectiva' }}</mat-label>
+          <mat-select formControlName="dias_tasa">
+            <mat-option *ngFor="let m of tiposCapitalizacion" [value]="m.value">
+              {{ m.viewValue }}
+            </mat-option>
+          </mat-select>
           <mat-error
-            *ngIf="obtenerControlCampo('dias_descuento')?.errors?.['required']"
+            *ngIf="obtenerControlCampo('dias_tasa')?.errors?.['required']"
           >
-            Los dias de descuento es obligatorio.
+          El tipo de tasa es obligatorio.
           </mat-error>
         </mat-form-field>
 
+        <br />
         <mat-form-field class="example-full-width">
-          <mat-label>{{ form.get('tipo_tasa')?.value === 'NOMINAL' ? 'Periodo de capitalización' : 'Tipo tasa efectiva' }}</mat-label>
+          <mat-label>Periodo de capitalización</mat-label>
           <mat-select formControlName="periodo_capitalizacion">
             <mat-option *ngFor="let m of tiposCapitalizacion" [value]="m.value">
               {{ m.viewValue }}
@@ -171,15 +173,17 @@
           <mat-error
             *ngIf="obtenerControlCampo('periodo_capitalizacion')?.errors?.['required']"
           >
-            {{ form.get('tipo_tasa')?.value === 'NOMINAL' ? 'El tipo de capitalización es obligatorio' : 'El tipo de tasa efectiva es obligatorio' }}
+            El tipo de capitalización es obligatorio
           </mat-error>
         </mat-form-field>
 
+        <br />
         <mat-form-field class="example-full-width">
           <mat-label>Tasa de Descuento Calculada (%)</mat-label>
           <input matInput formControlName="tasa_efectiva_calculada" readonly>
         </mat-form-field>
 
+        <br />
         <mat-form-field class="example-full-width">
           <mat-label>Tipo de tasa efectiva para el descuento</mat-label>
           <mat-select formControlName="tipo_tasa_efectiva">
@@ -258,6 +262,23 @@
         <mat-form-field class="example-full-width">
           <mat-label>IGV</mat-label>
           <input matInput formControlName="igv" readonly>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Dias de descuento</mat-label>
+          <input matInput
+                 type="text"
+                 placeholder="0"
+                 formControlName="dias_descuento"
+                 (keypress)="validarEntero($event)"
+                 (input)="formatearEntero($event, 'dias_descuento')"
+                 (blur)="onBlurEntero($event, 'dias_descuento')"/>
+          <mat-error
+            *ngIf="obtenerControlCampo('dias_descuento')?.errors?.['required']"
+          >
+            Los dias de descuento es obligatorio.
+          </mat-error>
         </mat-form-field>
 
         <br />
