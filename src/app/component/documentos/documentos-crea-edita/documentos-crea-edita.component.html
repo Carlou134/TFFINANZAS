@@ -59,15 +59,20 @@
         <br />
         <mat-form-field class="example-full-width">
           <mat-label>Valor Nominal</mat-label>
-          <input matInput placeholder="0" formControlName="valor_nominal" />
-          <mat-error
-            *ngIf="obtenerControlCampo('valor_nominal')?.errors?.['required']"
-          >
+          <input matInput
+                 type="text"
+                 placeholder="0.00"
+                 formControlName="valor_nominal"
+                 (keypress)="validarNumero($event)"
+                 (input)="formatearNumero($event, 'valor_nominal')"
+                 (blur)="onBlur($event, 'valor_nominal')"/>
+          <mat-error *ngIf="obtenerControlCampo('valor_nominal')?.errors?.['required']">
             El valor nominal es obligatorio.
           </mat-error>
         </mat-form-field>
 
         <!-- Fecha de emisión -->
+        <br />
         <mat-form-field class="example-full-width">
           <mat-label>Fecha de emision</mat-label>
           <input matInput [matDatepicker]="pickerEmision"
@@ -82,7 +87,6 @@
         </mat-form-field>
 
         <br />
-
         <!-- Fecha de vencimiento -->
         <mat-form-field class="example-full-width">
           <mat-label>Fecha de vencimiento</mat-label>
@@ -113,12 +117,16 @@
 
         <br />
         <mat-form-field class="example-full-width">
-          <mat-label>Tasa efectiva (Para calculo del descuento)</mat-label>
-          <input matInput placeholder="0" formControlName="tasa_descuento" />
-          <mat-error
-            *ngIf="obtenerControlCampo('tasa_descuento')?.errors?.['required']"
-          >
-            La tasa para el descuento es obligatoria.
+          <mat-label>Valor Tasa %</mat-label>
+          <input matInput
+                 type="text"
+                 placeholder="0.00"
+                 formControlName="valor_tasa"
+                 (keypress)="validarNumero($event)"
+                 (input)="formatearNumero($event, 'valor_tasa')"
+                 (blur)="onBlur($event, 'valor_tasa')"/>
+          <mat-error *ngIf="obtenerControlCampo('valor_tasa')?.errors?.['required']">
+            El valor de la tasa es obligatorio.
           </mat-error>
         </mat-form-field>
 
@@ -139,7 +147,13 @@
         <br />
         <mat-form-field class="example-full-width">
           <mat-label>Dias de descuento</mat-label>
-          <input matInput placeholder="0" formControlName="dias_descuento" />
+          <input matInput
+                 type="text"
+                 placeholder="0"
+                 formControlName="dias_descuento"
+                 (keypress)="validarEntero($event)"
+                 (input)="formatearEntero($event, 'dias_descuento')"
+                 (blur)="onBlurEntero($event, 'dias_descuento')"/>
           <mat-error
             *ngIf="obtenerControlCampo('dias_descuento')?.errors?.['required']"
           >
@@ -183,10 +197,14 @@
         <br />
         <mat-form-field class="example-full-width">
           <mat-label>Portes</mat-label>
-          <input matInput placeholder="0" formControlName="portes" />
-          <mat-error
-            *ngIf="obtenerControlCampo('portes')?.errors?.['required']"
-          >
+          <input matInput
+                 type="text"
+                 placeholder="0.00"
+                 formControlName="portes"
+                 (keypress)="validarNumero($event)"
+                 (input)="formatearNumero($event, 'portes')"
+                 (blur)="onBlur($event, 'portes')"/>
+          <mat-error *ngIf="obtenerControlCampo('portes')?.errors?.['required']">
             El valor del porte es obligatorio.
           </mat-error>
         </mat-form-field>
@@ -194,33 +212,45 @@
         <br />
         <mat-form-field class="example-full-width">
           <mat-label>Comisión estudios</mat-label>
-          <input matInput placeholder="0" formControlName="comision_estudios" />
-          <mat-error
-            *ngIf="obtenerControlCampo('comision_estudios')?.errors?.['required']"
-          >
-            El valor de la comision es obligatorio.
+          <input matInput
+                 type="text"
+                 placeholder="0.00"
+                 formControlName="comision_estudios"
+                 (keypress)="validarNumero($event)"
+                 (input)="formatearNumero($event, 'comision_estudios')"
+                 (blur)="onBlur($event, 'comision_estudios')"/>
+          <mat-error *ngIf="obtenerControlCampo('comision_estudios')?.errors?.['required']">
+            El valor de la comisión es obligatorio.
           </mat-error>
         </mat-form-field>
 
         <br />
         <mat-form-field class="example-full-width">
           <mat-label>Comisión desembolso</mat-label>
-          <input matInput placeholder="0" formControlName="comision_desembolso" />
-          <mat-error
-            *ngIf="obtenerControlCampo('comision_desembolso')?.errors?.['required']"
-          >
-            El valor de la comision es obligatorio.
+          <input matInput
+                 type="text"
+                 placeholder="0.00"
+                 formControlName="comision_desembolso"
+                 (keypress)="validarNumero($event)"
+                 (input)="formatearNumero($event, 'comision_desembolso')"
+                 (blur)="onBlur($event, 'comision_desembolso')"/>
+          <mat-error *ngIf="obtenerControlCampo('comision_desembolso')?.errors?.['required']">
+            El valor de la comisión es obligatorio.
           </mat-error>
         </mat-form-field>
 
         <br />
         <mat-form-field class="example-full-width">
           <mat-label>Comisión cobranza</mat-label>
-          <input matInput placeholder="0" formControlName="comision_cobranza" />
-          <mat-error
-            *ngIf="obtenerControlCampo('comision_cobranza')?.errors?.['required']"
-          >
-            El valor de la comision es obligatorio.
+          <input matInput
+                 type="text"
+                 placeholder="0.00"
+                 formControlName="comision_cobranza"
+                 (keypress)="validarNumero($event)"
+                 (input)="formatearNumero($event, 'comision_cobranza')"
+                 (blur)="onBlur($event, 'comision_cobranza')"/>
+          <mat-error *ngIf="obtenerControlCampo('comision_cobranza')?.errors?.['required']">
+            El valor de la comisión es obligatorio.
           </mat-error>
         </mat-form-field>
 
@@ -228,6 +258,17 @@
         <mat-form-field class="example-full-width">
           <mat-label>IGV</mat-label>
           <input matInput formControlName="igv" readonly>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Tasa efectiva (Para calculo del descuento)</mat-label>
+          <input matInput placeholder="0" formControlName="tasa_descuento" />
+          <mat-error
+            *ngIf="obtenerControlCampo('tasa_descuento')?.errors?.['required']"
+          >
+            La tasa para el descuento es obligatoria.
+          </mat-error>
         </mat-form-field>
 
         <br />

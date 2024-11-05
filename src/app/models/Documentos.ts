@@ -11,7 +11,7 @@ export class Documentos {
   fecha_emision:Date=new Date(Date.now())
   fecha_vencimiento:Date=new Date(Date.now())
   moneda: string = ""
-  tasa_descuento: number = 0.0
+  valor_tasa: number = 0.0
   tipo_tasa: string = ""
   dias_descuento: number = 0
   periodo_capitalizacion: string = ""
@@ -24,6 +24,7 @@ export class Documentos {
   comision_cobranza: number = 0.0
   //Sistema
   igv: number = 0.0
+  tasa_descuento: number = 0.0
   //Sistema
   valor_neto: number = 0.0
   estado: string = ""

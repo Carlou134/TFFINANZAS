@@ -100,7 +100,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
       fecha_emision: [null, Validators.required],
       fecha_vencimiento: [null, Validators.required],
       moneda: ['', Validators.required],
-      tasa_descuento: ['', Validators.required],
+      valor_tasa: ['', Validators.required],
       tipo_tasa: ['', Validators.required],
       dias_descuento: ['', Validators.required],
       periodo_capitalizacion: ['', Validators.required],
@@ -113,6 +113,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
       comision_cobranza: ['', Validators.required],
       //Sistema
       igv: [{ value: '', disabled: true }],
+      tasa_descuento: ['', Validators.required],
       valor_neto: [{ value: '', disabled: true }],
       estado: ['', Validators.required],
     });
@@ -177,7 +178,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
       this.documentos.fecha_emision = this.form.value.fecha_emision;
       this.documentos.fecha_vencimiento = this.form.value.fecha_vencimiento;
       this.documentos.moneda = this.form.value.moneda;
-      this.documentos.tasa_descuento = this.form.value.tasa_descuento;
+      this.documentos.valor_tasa = this.form.value.valor_tasa;
       this.documentos.tipo_tasa = this.form.value.tipo_tasa;
       this.documentos.dias_descuento = this.form.value.dias_descuento;
       this.documentos.periodo_capitalizacion = this.form.value.periodo_capitalizacion;
@@ -188,6 +189,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
       this.documentos.comision_desembolso = this.form.value.comision_desembolso;
       this.documentos.comision_cobranza = this.form.value.comision_cobranza;
       this.documentos.igv = this.form.get('igv')?.value;
+      this.documentos.tasa_descuento = this.form.value.tasa_descuento;
       this.documentos.valor_neto = this.form.get('valor_neto')?.value;
       this.documentos.estado = this.form.value.estado;
 
@@ -332,7 +334,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
           fecha_emision: new FormControl(data.fecha_emision),
           fecha_vencimiento: new FormControl(data.fecha_vencimiento),
           moneda: new FormControl(data.moneda),
-          tasa_descuento: new FormControl(data.tasa_descuento),
+          valor_tasa: new FormControl(data.valor_tasa),
           tipo_tasa: new FormControl(data.tipo_tasa),
           dias_descuento: new FormControl(data.dias_descuento),
           periodo_capitalizacion: new FormControl(
@@ -349,6 +351,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
           comision_desembolso: new FormControl(data.comision_desembolso),
           comision_cobranza: new FormControl(data.comision_cobranza),
           igv: new FormControl({ value: data.igv, disabled: true }),
+          tasa_descuento: new FormControl(data.tasa_descuento),
           valor_neto: new FormControl({
             value: data.valor_neto,
             disabled: true
@@ -412,5 +415,113 @@ export class DocumentosCreaEditaComponent implements OnInit {
       this.calcularValorNeto();
       });
     }
+  }
+
+  //Validaciones
+  validarNumero(event: KeyboardEvent): boolean {
+    const pattern = /^[0-9.]$/;
+    const inputChar = String.fromCharCode(event.charCode);
+    const currentValue = (event.target as HTMLInputElement).value;
+
+    if (inputChar === '.') {
+      if (currentValue.includes('.') || currentValue === '') {
+        event.preventDefault();
+        return false;
+      }
+      return true;
+    }
+
+    if (!pattern.test(inputChar)) {
+      event.preventDefault();
+      return false;
+    }
+
+    return true;
+  }
+
+  formatearNumero(event: Event, controlName: string): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    if (value === '.') {
+      value = '0.';
+    }
+
+    value = value.replace(/[^\d.]|\.(?=.*\.)/g, '');
+
+    if (value.includes('.')) {
+      const parts = value.split('.');
+      if (parts[1].length > 2) {
+        value = `${parts[0]}.${parts[1].substring(0, 2)}`;
+      }
+    }
+
+    const patchValue: {[key: string]: any} = {};
+    patchValue[controlName] = value;
+    this.form.patchValue(patchValue, { emitEvent: true });
+  }
+
+  onBlur(event: FocusEvent, controlName: string): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    if (value === '') {
+      value = '0.00';
+    } else if (value.endsWith('.')) {
+      value = value + '00';
+    } else if (!value.includes('.')) {
+      value = value + '.00';
+    } else if (value.split('.')[1].length === 1) {
+      value = value + '0';
+    }
+
+    const patchValue: {[key: string]: any} = {};
+    patchValue[controlName] = value;
+    this.form.patchValue(patchValue, { emitEvent: true });
+  }
+
+  validarEntero(event: KeyboardEvent): boolean {
+    const pattern = /^[0-9]$/;
+    const inputChar = String.fromCharCode(event.charCode);
+
+    // Solo permitir números
+    if (!pattern.test(inputChar)) {
+      event.preventDefault();
+      return false;
+    }
+
+    return true;
+  }
+
+  formatearEntero(event: Event, controlName: string): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    // Remover cualquier caracter que no sea número
+    value = value.replace(/[^\d]/g, '');
+
+    // Remover ceros a la izquierda
+    value = value.replace(/^0+/, '') || '0';
+
+    const patchValue: {[key: string]: any} = {};
+    patchValue[controlName] = value;
+    this.form.patchValue(patchValue, { emitEvent: true });
+  }
+
+  onBlurEntero(event: FocusEvent, controlName: string): void {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+
+    // Si está vacío, poner 0
+    if (value === '') {
+      value = '0';
+    }
+
+    // Remover ceros a la izquierda
+    value = value.replace(/^0+/, '') || '0';
+
+    const patchValue: {[key: string]: any} = {};
+    patchValue[controlName] = value;
+    this.form.patchValue(patchValue, { emitEvent: true });
   }
 }
