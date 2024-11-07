@@ -42,6 +42,7 @@ export class DocumentosListarComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {  // Cambiado de queryParams a params
       this.cartera_id = +params['id'];  // Cambiado de 'idCartera' a 'id'
+      console.log(this.cartera_id);
       this.tS.listByCartera(this.cartera_id).subscribe((data) => {
         this.dataSource = new MatTableDataSource(data);
         this.dataSource.paginator = this.paginator;

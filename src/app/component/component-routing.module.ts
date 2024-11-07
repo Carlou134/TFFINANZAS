@@ -52,7 +52,7 @@ const routes: Routes = [
     component: DocumentosComponent,
     children: [
       { path: 'nuevo', component: DocumentosCreaEditaComponent},
-      { path: 'editardoc/:id', component: DocumentosCreaEditaComponent}
+      { path: 'editar/:documento_id', component: DocumentosCreaEditaComponent}
     ]
   },
   {

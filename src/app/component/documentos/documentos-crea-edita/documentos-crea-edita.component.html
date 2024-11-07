@@ -78,7 +78,6 @@
           <mat-label>Fecha de emision</mat-label>
           <input matInput [matDatepicker]="pickerEmision"
                 formControlName="fecha_emision"
-                [min]="minFechaEmision"
                 placeholder="Seleccione una fecha">
           <mat-datepicker-toggle matSuffix [for]="pickerEmision"></mat-datepicker-toggle>
           <mat-datepicker #pickerEmision></mat-datepicker>
@@ -283,13 +282,8 @@
 
         <br />
         <mat-form-field class="example-full-width">
-          <mat-label>Tasa efectiva (Para calculo del descuento)</mat-label>
-          <input matInput placeholder="0" formControlName="tasa_descuento" />
-          <mat-error
-            *ngIf="obtenerControlCampo('tasa_descuento')?.errors?.['required']"
-          >
-            La tasa para el descuento es obligatoria.
-          </mat-error>
+          <mat-label>Tasa descuento (%)</mat-label>
+          <input matInput formControlName="tasa_descuento" readonly>
         </mat-form-field>
 
         <br />
@@ -299,8 +293,23 @@
         </mat-form-field>
 
         <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="estado">
+            <mat-option *ngFor="let m of tiposEstado" [value]="m.value">
+              {{ m.viewValue }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="obtenerControlCampo('estado')?.errors?.['required']"
+          >
+          El estado del documento es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
         <button mat-raised-button color="primary">Aceptar</button>
-        <button mat-raised-button color="warn" type="button" [routerLink]="['/components/documentos']">
+        <button mat-raised-button color="warn" type="button" [routerLink]="['/components/documentos', cartera_id]">
           Cancelar
         </button>
         <p>{{ mensaje }}</p>

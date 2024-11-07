@@ -11,11 +11,12 @@
       <h2 style="text-align: center">Lista de Documentos</h2>
       <div style="text-align: right">
         <button
-            mat-raised-button
-            [routerLink]="['/components/documentos', cartera_id, 'nuevo']"
+        mat-raised-button
+        [routerLink]="['nuevo']"
+        [queryParams]="{cartera_id: cartera_id}"
         >
-            Nuevo
-        </button>
+        Nuevo
+    </button>
         <button
           mat-raised-button
           routerLink="/components/cartera-documentos"
@@ -133,7 +134,8 @@
             <button
               mat-raised-button
               color="warn"
-              [routerLink]="['cartera', element.id]"
+              [routerLink]="['editar', element.id]"
+              [queryParams]="{cartera_id: cartera_id}"
             >
               <mat-icon>create</mat-icon>
             </button>
