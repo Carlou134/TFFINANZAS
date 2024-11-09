@@ -49,13 +49,21 @@ export class BancosCreaEditaComponent {
       this.edicion = data['id'] != null;
       this.init();
     });
+
     this.form = this.formBuilder.group({
-      id: ['',],
+      id: [''],
       nombre: ['', Validators.required],
-      codigo: ['', Validators.required],
-      ruc: ['', Validators.required],
+      codigo: ['', [
+        Validators.required,
+        Validators.pattern('^[0-9]*$') // Solo números
+      ]],
+      ruc: ['', [
+        Validators.required,
+        Validators.pattern('^[0-9]*$') // Solo números
+      ]],
     });
   }
+
   aceptar(): void {
     if (this.form.valid) {
       this.bancos.id = this.form.value.id;
@@ -88,16 +96,31 @@ export class BancosCreaEditaComponent {
     }
     return control;
   }
+
   init() {
     if (this.edicion) {
       this.cS.listId(this.id).subscribe((data) => {
         this.form = new FormGroup({
           id: new FormControl(data.id),
           nombre: new FormControl(data.nombre),
-          codigo: new FormControl(data.codigo),
-          ruc:new FormControl(data.ruc),
+          codigo: new FormControl(data.codigo, [
+            Validators.required,
+            Validators.pattern('^[0-9]*$')
+          ]),
+          ruc: new FormControl(data.ruc, [
+            Validators.required,
+            Validators.pattern('^[0-9]*$')
+          ]),
         });
       });
     }
+  }
+
+  soloNumeros(event: KeyboardEvent): boolean {
+    const charCode = (event.which) ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 }

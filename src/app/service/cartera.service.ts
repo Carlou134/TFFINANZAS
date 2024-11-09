@@ -73,4 +73,10 @@ export class CarteraService {
       headers: this.getHeaders()
     });
   }
+
+  getDiasCartera(idCartera: number) {
+    return this.http.get<Date[]>(`${this.url}/dias-cartera/${idCartera}`, {
+      headers: this.getHeaders()
+    });
+  }
 }

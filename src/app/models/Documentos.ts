@@ -28,5 +28,6 @@ export class Documentos {
   tasa_descuento: number = 0.0
   //Sistema
   valor_neto: number = 0.0
+  intereses_calculados: number = 0.0
   estado: string = ""
 }

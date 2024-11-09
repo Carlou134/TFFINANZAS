@@ -33,11 +33,17 @@
             matInput
             placeholder="Codigo"
             formControlName="codigo"
+            (keypress)="soloNumeros($event)"
           />
           <mat-error
             *ngIf="obtenerControlCampo('codigo')?.errors?.['required']"
           >
             El codigo bancario es obligatorio.
+          </mat-error>
+          <mat-error
+            *ngIf="obtenerControlCampo('codigo')?.errors?.['pattern']"
+          >
+            Solo se permiten números.
           </mat-error>
         </mat-form-field>
 
@@ -49,11 +55,17 @@
             matInput
             placeholder="RUC"
             formControlName="ruc"
+            (keypress)="soloNumeros($event)" 
           />
           <mat-error
             *ngIf="obtenerControlCampo('ruc')?.errors?.['required']"
           >
             El RUC es obligatorio.
+          </mat-error>
+          <mat-error
+            *ngIf="obtenerControlCampo('ruc')?.errors?.['pattern']"
+          >
+            Solo se permiten números.
           </mat-error>
         </mat-form-field>
 
