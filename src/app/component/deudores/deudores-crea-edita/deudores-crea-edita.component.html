@@ -16,22 +16,28 @@
 
         <br />
         <mat-form-field class="example-full-width">
-          <mat-label>ruc</mat-label>
+          <mat-label>RUC</mat-label>
           <input
             matInput
             placeholder="RUC"
             formControlName="ruc"
+            (keypress)="soloNumeros($event)"
+            maxlength="11"
           />
-          <mat-error
-            *ngIf="obtenerControlCampo('ruc')?.errors?.['required']"
-          >
+          <mat-error *ngIf="obtenerControlCampo('ruc')?.errors?.['required']">
             El RUC es obligatorio.
+          </mat-error>
+          <mat-error *ngIf="obtenerControlCampo('ruc')?.errors?.['pattern']">
+            Solo se permiten números.
+          </mat-error>
+          <mat-error *ngIf="obtenerControlCampo('ruc')?.errors?.['minlength']">
+            El RUC debe tener 11 dígitos.
           </mat-error>
         </mat-form-field>
 
         <br />
         <mat-form-field class="example-full-width">
-          <mat-label>Deudor</mat-label>
+          <mat-label>Razón social</mat-label>
           <input matInput placeholder="Deudor" formControlName="razon_social" />
           <mat-error
             *ngIf="obtenerControlCampo('razon_social')?.errors?.['required']"
@@ -57,16 +63,14 @@
 
         <br />
         <mat-form-field class="example-full-width">
-          <mat-label>Telefono</mat-label>
+          <mat-label>Teléfono</mat-label>
           <input
             matInput
-            placeholder="telefono"
+            placeholder="teléfono"
             formControlName="telefono"
           />
-          <mat-error
-            *ngIf="obtenerControlCampo('telefono')?.errors?.['required']"
-          >
-            El telefono es obligatorio.
+          <mat-error *ngIf="obtenerControlCampo('telefono')?.errors?.['required']">
+            El teléfono es obligatorio.
           </mat-error>
         </mat-form-field>
 

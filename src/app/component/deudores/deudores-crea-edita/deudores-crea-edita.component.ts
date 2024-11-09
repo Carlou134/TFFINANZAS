@@ -50,15 +50,24 @@ export class DeudoresCreaEditaComponent {
       this.edicion = data['id'] != null;
       this.init();
     });
+
     this.form = this.formBuilder.group({
-      id: ['',],
-      ruc: ['', Validators.required],
+      id: [''],
+      ruc: ['', [
+        Validators.required,
+        Validators.pattern('^[0-9]*$'),  // Solo números
+        Validators.minLength(11),        // RUC debe tener 11 dígitos
+        Validators.maxLength(11)
+      ]],
       razon_social: ['', Validators.required],
       direccion: ['', Validators.required],
-      telefono: ['', Validators.required],
+      telefono: ['', [
+        Validators.required
+      ]],
       email: ['', [Validators.required, Validators.email]],
     });
   }
+
   aceptar(): void {
     if (this.form.valid) {
       this.deudores.id = this.form.value.id;
@@ -98,13 +107,28 @@ export class DeudoresCreaEditaComponent {
       this.cS.listId(this.id).subscribe((data) => {
         this.form = new FormGroup({
           id: new FormControl(data.id),
-          ruc: new FormControl(data.ruc),
-          razon_social: new FormControl(data.razon_social),
-          direccion:new FormControl(data.direccion),
-          telefono:new FormControl(data.telefono),
-          email:new FormControl(data.email),
+          ruc: new FormControl(data.ruc, [
+            Validators.required,
+            Validators.pattern('^[0-9]*$'),
+            Validators.minLength(11),
+            Validators.maxLength(11)
+          ]),
+          razon_social: new FormControl(data.razon_social, Validators.required),
+          direccion: new FormControl(data.direccion, Validators.required),
+          telefono: new FormControl(data.telefono, [
+            Validators.required
+          ]),
+          email: new FormControl(data.email, [Validators.required, Validators.email]),
         });
       });
     }
+  }
+
+  soloNumeros(event: KeyboardEvent): boolean {
+    const charCode = (event.which) ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
   }
 }
