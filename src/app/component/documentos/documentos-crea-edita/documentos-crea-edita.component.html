@@ -185,16 +185,11 @@
         <br />
         <mat-form-field class="example-full-width">
           <mat-label>Tipo de tasa efectiva para el descuento</mat-label>
-          <mat-select formControlName="tipo_tasa_efectiva">
+          <mat-select formControlName="tipo_tasa_efectiva" readonly>
             <mat-option *ngFor="let m of tiposTasaEfectiva" [value]="m.value">
               {{ m.viewValue }}
             </mat-option>
           </mat-select>
-          <mat-error
-            *ngIf="obtenerControlCampo('tipo_tasa_efectiva')?.errors?.['required']"
-          >
-            El tipo de tasa es obligatorio.
-          </mat-error>
         </mat-form-field>
 
         <br />
