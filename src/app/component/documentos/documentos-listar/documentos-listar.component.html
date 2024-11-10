@@ -110,17 +110,17 @@
 
         <ng-container matColumnDef="comisiones">
           <th mat-header-cell *matHeaderCellDef> Comisiones </th>
-          <td mat-cell *matCellDef="let element"> {{element.portes + element.comision_estudios + element.comision_desembolso + element.comision_cobranza | number:'1.2-2'}}  </td>
-        </ng-container>
-
-        <ng-container matColumnDef="igv">
-          <th mat-header-cell *matHeaderCellDef> IGV </th>
-          <td mat-cell *matCellDef="let element"> {{element.igv}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.portes + element.comision_estudios + element.comision_desembolso + element.comision_cobranza + element.igv | number:'1.2-2'}}  </td>
         </ng-container>
 
         <ng-container matColumnDef="valor_neto">
           <th mat-header-cell *matHeaderCellDef> Valor Neto </th>
           <td mat-cell *matCellDef="let element"> {{element.valor_neto}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="intereses">
+          <th mat-header-cell *matHeaderCellDef> Intereses </th>
+          <td mat-cell *matCellDef="let element"> {{element.intereses_calculados}} </td>
         </ng-container>
 
         <ng-container matColumnDef="estado">

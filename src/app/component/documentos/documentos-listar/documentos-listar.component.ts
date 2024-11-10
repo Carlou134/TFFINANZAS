@@ -32,7 +32,7 @@ export class DocumentosListarComponent implements OnInit {
   ['codigo', 'deudor', 'tipo', 'documento', 'valor_nominal',
     'fecha_emision', 'fecha_vencimiento', 'moneda', 'tasa_descuento',
     'tipo_tasa', 'dias_descuento', 'periodo_capitalizacion', 'tasa_efectiva',
-    'comisiones','igv', 'valor_neto', 'estado',
+    'comisiones','intereses', 'valor_neto', 'estado',
     'accion01', 'accion02'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   cartera_id: number = 0; // Variable agregada para almacenar el ID
