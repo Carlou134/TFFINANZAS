@@ -7,13 +7,8 @@ export class Cartera {
   bancos: Bancos = new Bancos()
   fecha_descuento:Date=new Date(Date.now())
   moneda: string=""
-  total_valor_nominal: number = 0.0
-  total_valor_portes: number = 0.0
-  total_comision_estudios: number = 0.0
-  total_desembolso_cobranza: number = 0.0
-  total_igv: number = 0.0
   total_valor_neto: number = 0.0
+  total_valor_neto_convertido: number = 0.0
   tcea: number = 0.0
-  dias_promedio: number = 0
   estado: string = ""
 }

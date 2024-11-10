@@ -47,6 +47,11 @@ export class CarteraCreaEditaComponent implements OnInit {
     { value: 'SOLES', viewValue: 'SOLES' },
     { value: 'DOLARES', viewValue: 'DOLARES' },
   ];
+  tiposEstado: { value: string; viewValue: string }[] = [
+    { value: 'PENDIENTE', viewValue: 'PENDIENTE' },
+    { value: 'DESCONTADO', viewValue: 'DESCONTADO' },
+    { value: 'CANCELADO', viewValue: 'CANCELADO' },
+  ];
   listaBancos: Bancos[] = [];
   idBancoSeleccionado: number = 0;
   minFecha: Date = moment().add(1, 'days').toDate();
@@ -70,6 +75,7 @@ export class CarteraCreaEditaComponent implements OnInit {
       bancos: ['', Validators.required],
       fecha_descuento: [null, Validators.required],
       moneda: ['', Validators.required],
+      estado: ['', Validators.required],
     });
     this.bS.list().subscribe((data) => {
       this.listaBancos = data;
@@ -82,6 +88,7 @@ export class CarteraCreaEditaComponent implements OnInit {
       this.cartera.bancos.id = this.form.value.bancos;
       this.cartera.fecha_descuento = this.form.value.fecha_descuento;
       this.cartera.moneda = this.form.value.moneda;
+      this.cartera.estado = this.form.value.estado;
 
 
       if (this.edicion) {
@@ -118,6 +125,7 @@ export class CarteraCreaEditaComponent implements OnInit {
           bancos: new FormControl(data.bancos.id),
           fecha_descuento: new FormControl(data.fecha_descuento),
           moneda: new FormControl(data.moneda),
+          estado: new FormControl(data.estado),
         });
       });
     }

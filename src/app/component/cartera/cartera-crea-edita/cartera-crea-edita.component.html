@@ -60,6 +60,21 @@
         </mat-form-field>
 
         <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="estado">
+            <mat-option *ngFor="let m of tiposEstado" [value]="m.value">
+              {{ m.viewValue }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="obtenerControlCampo('estado')?.errors?.['required']"
+          >
+          El estado del documento es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
         <button mat-raised-button color="primary">Aceptar</button>
         <button mat-raised-button color="warn" type="button" [routerLink]="['/components/cartera']">
           Cancelar
