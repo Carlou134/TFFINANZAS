@@ -13,6 +13,7 @@ import { Documentos } from '../../../models/Documentos';
 import { Deudores } from '../../../models/Deudores';
 import { DocumentosService } from '../../../service/documentos.service';
 import { DeudoresService } from '../../../service/deudores.service';
+import { CarteraService } from '../../../service/cartera.service';
 
 @Component({
   selector: 'app-documentos-crea-edita',
@@ -82,13 +83,15 @@ export class DocumentosCreaEditaComponent implements OnInit {
   idDeudorSeleccionado: number = 0;
   minFecha: Date = moment().add(1, 'days').toDate();
   cartera_id: number = 0;
+  fechaDescuento: Date | null = null;
 
   constructor(
     private cS: DocumentosService,
     private router: Router,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
-    private bS: DeudoresService
+    private bS: DeudoresService,
+    private carteraService: CarteraService
   ) {}
 
   ngOnInit(): void {
@@ -97,6 +100,20 @@ export class DocumentosCreaEditaComponent implements OnInit {
         this.cartera_id = Number(queryParams['cartera_id']);
         console.log('Cartera ID recibido:', this.cartera_id);
       }
+
+       // Obtener la fecha de descuento de la cartera
+       this.carteraService.getDiasCartera(this.cartera_id).subscribe(
+        (fechas: Date[]) => {
+          if (fechas && fechas.length > 0) {
+            this.fechaDescuento = new Date(fechas[0]);
+            console.log('Fecha de descuento:', this.fechaDescuento);
+          }
+        },
+        error => {
+          console.error('Error al obtener fecha de descuento:', error);
+          this.mensaje = 'Error al obtener fecha de descuento de la cartera.';
+        }
+      );
     });
 
     this.route.params.subscribe(params => {
@@ -128,40 +145,61 @@ export class DocumentosCreaEditaComponent implements OnInit {
       comision_desembolso: ['', Validators.required],
       comision_cobranza: ['', Validators.required],
       igv: [{ value: '', disabled: true }],
-      dias_descuento: ['', Validators.required],
+      dias_descuento: [{ value: '', disabled: true }],
       tasa_descuento: [{ value: '', disabled: true }],
       valor_neto: [{ value: '', disabled: true }],
+      intereses_calculados: [{ value: '', disabled: true }],
       estado: ['', Validators.required],
     });
 
     // Observador para tipo_tasa
     this.form.get('tipo_tasa')?.valueChanges.subscribe((valor) => {
+      console.log('Cambio en tipo_tasa:', valor);
       const periodoCapControl = this.form.get('periodo_capitalizacion');
 
       if (valor === 'NOMINAL') {
         periodoCapControl?.enable();
         periodoCapControl?.setValidators([Validators.required]);
+        console.log('periodo_capitalizacion habilitado');
       } else {
         periodoCapControl?.disable();
         periodoCapControl?.clearValidators();
         periodoCapControl?.setValue('');
+        console.log('periodo_capitalizacion deshabilitado');
       }
       periodoCapControl?.updateValueAndValidity();
     });
 
-    // Observadores para cálculos automáticos
-    const camposParaObservar = [
-      'valor_tasa',  // Añadir esta línea
-      'tipo_tasa',
-      'periodo_capitalizacion',
-      'dias_tasa'    // Añadir esta línea también
-  ];
+    // Observadores para cálculos de tasa
+    const camposParaTasa = ['valor_tasa', 'tipo_tasa', 'tipo_tasa_efectiva', 'periodo_capitalizacion'];
 
-  camposParaObservar.forEach(campo => {
+    camposParaTasa.forEach(campo => {
       this.form.get(campo)?.valueChanges.subscribe(() => {
+        console.log(`Cambio detectado en ${campo}`);
+        const tipoTasa = this.form.get('tipo_tasa')?.value;
+        const periodoCapControl = this.form.get('periodo_capitalizacion');
+
+        // Verificar si deberíamos calcular basándonos en el estado actual
+        if (tipoTasa === 'NOMINAL') {
+          if (!periodoCapControl?.disabled && periodoCapControl?.value) {
+            console.log('Calculando con tasa NOMINAL - periodo_capitalizacion activo:', periodoCapControl?.value);
+            this.calcularTasaEfectiva();
+            this.calcularTasaDescuento();
+          } else {
+            console.log('Periodo capitalización no válido para cálculo:', {
+              disabled: periodoCapControl?.disabled,
+              value: periodoCapControl?.value
+            });
+          }
+        } else if (tipoTasa === 'EFECTIVA') {
+          console.log('Calculando con tasa EFECTIVA');
           this.calcularTasaEfectiva();
+          this.calcularTasaDescuento();
+        } else {
+          console.log('Tipo de tasa no válido para cálculo:', tipoTasa);
+        }
       });
-  });
+    });
 
     const camposComisiones = ['portes', 'comision_estudios', 'comision_desembolso', 'comision_cobranza'];
     camposComisiones.forEach(campo => {
@@ -170,15 +208,26 @@ export class DocumentosCreaEditaComponent implements OnInit {
       });
     });
 
-    const camposParaValorNeto = [
+    this.form.get('fecha_vencimiento')?.valueChanges.subscribe((fecha) => {
+      console.log('Nueva fecha de vencimiento seleccionada:', fecha);
+      if (fecha && this.fechaDescuento) {
+        this.calcularDiasDescuento(fecha);
+      }
+    });
+
+    // Observer para valor neto
+    const camposNecesariosParaValorNeto = [
       'valor_nominal',
       'tasa_efectiva_calculada',
+      'igv',
+      'dias_descuento',
       'portes',
       'comision_estudios',
       'comision_desembolso',
-      'comision_cobranza',
+      'comision_cobranza'
     ];
-    camposParaValorNeto.forEach(campo => {
+
+    camposNecesariosParaValorNeto.forEach(campo => {
       this.form.get(campo)?.valueChanges.subscribe(() => {
         this.calcularValorNeto();
       });
@@ -188,10 +237,6 @@ export class DocumentosCreaEditaComponent implements OnInit {
       this.listaDeudores = data;
     });
 
-    this.form.get('dias_descuento')?.valueChanges.subscribe(() => {
-      this.calcularTasaDescuento();
-      this.calcularValorNeto();
-    });
   }
 
   aceptar(): void {
@@ -216,9 +261,10 @@ export class DocumentosCreaEditaComponent implements OnInit {
       this.documentos.comision_desembolso = this.form.value.comision_desembolso;
       this.documentos.comision_cobranza = this.form.value.comision_cobranza;
       this.documentos.igv = this.form.get('igv')?.value;
-      this.documentos.dias_descuento = this.form.value.dias_descuento;
+      this.documentos.dias_descuento = this.form.get('dias_descuento')?.value;
       this.documentos.tasa_descuento = this.form.get('tasa_descuento')?.value;
       this.documentos.valor_neto = this.form.get('valor_neto')?.value;
+      this.documentos.intereses_calculados = this.form.get('intereses_calculados')?.value;
       this.documentos.estado = this.form.value.estado;
 
       if (this.edicion) {
@@ -328,8 +374,17 @@ export class DocumentosCreaEditaComponent implements OnInit {
 
   private calcularTasaDescuento(): void {
     const tasaEfectivaCalculada = this.form.get('tasa_efectiva_calculada')?.value;
-    const tipoTasaEfectiva = this.form.get('tipo_tasa_efectiva')?.value;
+    const tipoTasaEfectiva = this.form.get('tipo_tasa_efectiva')?.value; // Cambiado de tipo_tasa a tipo_tasa_efectiva
     const diasDestino = this.form.get('dias_descuento')?.value;
+
+    if (!tasaEfectivaCalculada || !tipoTasaEfectiva || !diasDestino) {
+      console.log('Valores faltantes:', {
+        tasaEfectiva: tasaEfectivaCalculada,
+        tipoTasa: tipoTasaEfectiva,
+        dias: diasDestino
+      });
+      return;
+    }
 
     let tasaEfectivaParaDescuento: number;
     const diasOrigen = this.getDiasSegunTipoTasaEfectiva(tipoTasaEfectiva);
@@ -388,14 +443,45 @@ export class DocumentosCreaEditaComponent implements OnInit {
     // Valor final
     const valor_neto = valor_nominal - valor_descontado - total_comisiones - igv;
 
+    // Calcular intereses (valor_nominal - valor_neto)
+    const intereses = valor_nominal - valor_neto;
+
+    // Actualizar el formulario con ambos valores
     this.form.patchValue({
-        valor_neto: Number(valor_neto.toFixed(4))
+      valor_neto: Number(valor_neto.toFixed(4)),
+      intereses_calculados: Number(intereses.toFixed(4))
     }, { emitEvent: false });
+  }
+
+  private calcularDiasDescuento(fechaVencimiento: Date): void {
+    if (this.fechaDescuento) {
+      const fechaVenc = new Date(fechaVencimiento);
+      const fechaDesc = new Date(this.fechaDescuento);
+
+      console.log('Fecha de vencimiento:', fechaVenc);
+      console.log('Fecha de descuento:', fechaDesc);
+
+      // Normalizar las fechas
+      fechaVenc.setHours(0, 0, 0, 0);
+      fechaDesc.setHours(0, 0, 0, 0);
+
+      // Calcular la diferencia en días
+      const diferencia = fechaDesc.getTime() - fechaVenc.getTime();
+      const diasDescuento = Math.ceil(diferencia / (1000 * 3600 * 24));
+
+      console.log('Días de descuento calculados:', diasDescuento);
+
+      // Actualizar el formulario
+      this.form.patchValue({
+        dias_descuento: Math.max(0, diasDescuento)
+      }, { emitEvent: true }); // true para que dispare el cálculo de la tasa de descuento
+    }
   }
 
   init() {
     if (this.edicion) {
       this.cS.listId(this.id).subscribe((data) => {
+
         this.form = new FormGroup({
           id: new FormControl(data.id),
           cartera: new FormControl(this.cartera_id), // Mantenemos el cartera_id
@@ -426,7 +512,10 @@ export class DocumentosCreaEditaComponent implements OnInit {
           comision_desembolso: new FormControl(data.comision_desembolso),
           comision_cobranza: new FormControl(data.comision_cobranza),
           igv: new FormControl({ value: data.igv, disabled: true }),
-          dias_descuento: new FormControl(data.dias_descuento),
+          dias_descuento: new FormControl({
+            value: data.dias_descuento,
+            disabled: true
+          }),
           tasa_descuento: new FormControl({
             value: data.tasa_descuento,
             disabled: true
@@ -435,21 +524,11 @@ export class DocumentosCreaEditaComponent implements OnInit {
             value: data.valor_neto,
             disabled: true
           }),
+          intereses_calculados: new FormControl({
+            value: data.valor_neto,
+            disabled: true
+          }),
           estado: new FormControl(data.estado),
-        });
-
-        // Primero configurar el observer
-        this.form.get('tipo_tasa')?.valueChanges.subscribe((valor) => {
-          const periodoCapControl = this.form.get('periodo_capitalizacion');
-          if (valor === 'NOMINAL') {
-            periodoCapControl?.enable();
-            periodoCapControl?.setValidators([Validators.required]);
-          } else {
-            periodoCapControl?.disable();
-            periodoCapControl?.clearValidators();
-            periodoCapControl?.setValue('');
-          }
-          periodoCapControl?.updateValueAndValidity();
         });
 
         // Aplicar estado inicial basado en el tipo de tasa
@@ -465,26 +544,35 @@ export class DocumentosCreaEditaComponent implements OnInit {
         }
         periodoCapControl?.updateValueAndValidity();
 
-        // Restablecer todos los observadores
-        const camposParaObservar = [
-          'valor_tasa',
-          'tipo_tasa',
-          'periodo_capitalizacion',
-          'dias_tasa'
-      ];
+        // Configurar observers para cálculos de tasa
+        const camposParaTasa = ['valor_tasa', 'tipo_tasa', 'tipo_tasa_efectiva', 'periodo_capitalizacion'];
 
-      // Limpiar suscripciones anteriores si existen
-      camposParaObservar.forEach(campo => {
+        camposParaTasa.forEach(campo => {
           const control = this.form.get(campo);
           if (control) {
-              control.valueChanges.subscribe(() => {
-                  this.calcularTasaEfectiva();
-                  if (this.form.get('dias_descuento')?.value) {
-                      this.calcularTasaDescuento();
-                      this.calcularValorNeto();
-                  }
-              });
+            control.valueChanges.subscribe(() => {
+              console.log(`Cambio detectado en ${campo} (modo edición)`);
+              // Solo calcular si periodo_capitalizacion está activo cuando es requerido
+              const tipoTasa = this.form.get('tipo_tasa')?.value;
+              const periodoCapControl = this.form.get('periodo_capitalizacion');
+
+              if (tipoTasa === 'NOMINAL' && !periodoCapControl?.disabled) {
+                this.calcularTasaEfectiva();
+                this.calcularTasaDescuento();
+              } else if (tipoTasa === 'EFECTIVA') {
+                this.calcularTasaEfectiva();
+                this.calcularTasaDescuento();
+              }
+            });
           }
+        });
+
+        // Observer para fecha de vencimiento
+      this.form.get('fecha_vencimiento')?.valueChanges.subscribe((fecha) => {
+        console.log('Nueva fecha de vencimiento (modo edición):', fecha);
+        if (fecha && this.fechaDescuento) {
+          this.calcularDiasDescuento(fecha);
+        }
       });
 
 
@@ -496,30 +584,23 @@ export class DocumentosCreaEditaComponent implements OnInit {
           });
         });
 
-        // Calcular el IGV inicial
-        this.calcularIGV();
-
-        const camposParaValorNeto = [
+        // Observer para valor neto
+        const camposNecesariosParaValorNeto = [
           'valor_nominal',
           'tasa_efectiva_calculada',
+          'igv',
+          'dias_descuento',
           'portes',
           'comision_estudios',
           'comision_desembolso',
-          'comision_cobranza',
-          'igv'
-       ];
+          'comision_cobranza'
+        ];
 
-       camposParaValorNeto.forEach(campo => {
-        this.form.get(campo)?.valueChanges.subscribe(() => {
+        camposNecesariosParaValorNeto.forEach(campo => {
+          this.form.get(campo)?.valueChanges.subscribe(() => {
             this.calcularValorNeto();
+          });
         });
-      });
-
-      this.form.get('dias_descuento')?.valueChanges.subscribe(() => {
-        this.calcularTasaDescuento();
-      });
-
-      this.calcularValorNeto();
       });
     }
   }
