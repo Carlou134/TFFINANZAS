@@ -152,6 +152,20 @@ export class DocumentosCreaEditaComponent implements OnInit {
       estado: ['', Validators.required],
     });
 
+    const camposComisiones = ['portes', 'comision_estudios', 'comision_desembolso', 'comision_cobranza'];
+    camposComisiones.forEach(campo => {
+      this.form.get(campo)?.valueChanges.subscribe(() => {
+        this.calcularIGV();
+      });
+    });
+
+    this.form.get('fecha_vencimiento')?.valueChanges.subscribe((fecha) => {
+      console.log('Nueva fecha de vencimiento seleccionada:', fecha);
+      if (fecha && this.fechaDescuento) {
+        this.calcularDiasDescuento(fecha);
+      }
+    });
+
     // Observador para tipo_tasa
     this.form.get('tipo_tasa')?.valueChanges.subscribe((valor) => {
       console.log('Cambio en tipo_tasa:', valor);
@@ -178,40 +192,56 @@ export class DocumentosCreaEditaComponent implements OnInit {
         console.log(`Cambio detectado en ${campo}`);
         const tipoTasa = this.form.get('tipo_tasa')?.value;
         const periodoCapControl = this.form.get('periodo_capitalizacion');
+        const diasDescuento = this.form.get('dias_descuento')?.value;
 
         // Verificar si deberíamos calcular basándonos en el estado actual
         if (tipoTasa === 'NOMINAL') {
           if (!periodoCapControl?.disabled && periodoCapControl?.value) {
             console.log('Calculando con tasa NOMINAL - periodo_capitalizacion activo:', periodoCapControl?.value);
             this.calcularTasaEfectiva();
-            this.calcularTasaDescuento();
+            // Solo calcular tasa de descuento si dias_descuento tiene un valor
+            if (diasDescuento !== null && diasDescuento !== undefined && diasDescuento !== '') {
+              console.log('Calculando tasa de descuento con días:', diasDescuento);
+              this.calcularTasaDescuento();
+            }
           } else {
             console.log('Periodo capitalización no válido para cálculo:', {
               disabled: periodoCapControl?.disabled,
-              value: periodoCapControl?.value
+              value: periodoCapControl?.value,
+              diasDescuento: diasDescuento
             });
           }
         } else if (tipoTasa === 'EFECTIVA') {
           console.log('Calculando con tasa EFECTIVA');
           this.calcularTasaEfectiva();
-          this.calcularTasaDescuento();
+          // Solo calcular tasa de descuento si dias_descuento tiene un valor
+          if (diasDescuento !== null && diasDescuento !== undefined && diasDescuento !== '') {
+            console.log('Calculando tasa de descuento con días:', diasDescuento);
+            this.calcularTasaDescuento();
+          }
         } else {
           console.log('Tipo de tasa no válido para cálculo:', tipoTasa);
         }
       });
     });
 
-    const camposComisiones = ['portes', 'comision_estudios', 'comision_desembolso', 'comision_cobranza'];
-    camposComisiones.forEach(campo => {
-      this.form.get(campo)?.valueChanges.subscribe(() => {
-        this.calcularIGV();
-      });
-    });
+    // Observador específico para dias_descuento
+    this.form.get('dias_descuento')?.valueChanges.subscribe((dias) => {
+      console.log('Cambio detectado en dias_descuento:', dias);
+      if (dias !== null && dias !== undefined && dias !== '') {
+        const tipoTasa = this.form.get('tipo_tasa')?.value;
+        const periodoCapControl = this.form.get('periodo_capitalizacion');
+        const tasaEfectivaCalculada = this.form.get('tasa_efectiva_calculada')?.value;
 
-    this.form.get('fecha_vencimiento')?.valueChanges.subscribe((fecha) => {
-      console.log('Nueva fecha de vencimiento seleccionada:', fecha);
-      if (fecha && this.fechaDescuento) {
-        this.calcularDiasDescuento(fecha);
+        if (tasaEfectivaCalculada) {
+          if (tipoTasa === 'NOMINAL' && (!periodoCapControl?.disabled && periodoCapControl?.value)) {
+            console.log('Calculando tasa de descuento (NOMINAL) por cambio en días');
+            this.calcularTasaDescuento();
+          } else if (tipoTasa === 'EFECTIVA') {
+            console.log('Calculando tasa de descuento (EFECTIVA) por cambio en días');
+            this.calcularTasaDescuento();
+          }
+        }
       }
     });
 
@@ -531,47 +561,72 @@ export class DocumentosCreaEditaComponent implements OnInit {
           estado: new FormControl(data.estado),
         });
 
-        // Aplicar estado inicial basado en el tipo de tasa
-        const tipoTasaInicial = data.tipo_tasa;
-        const periodoCapControl = this.form.get('periodo_capitalizacion');
-        if (tipoTasaInicial === 'NOMINAL') {
-          periodoCapControl?.enable();
-          periodoCapControl?.setValidators([Validators.required]);
-        } else {
-          periodoCapControl?.disable();
-          periodoCapControl?.clearValidators();
-          periodoCapControl?.setValue('');
-        }
-        periodoCapControl?.updateValueAndValidity();
-
-        // Configurar observers para cálculos de tasa
-        const camposParaTasa = ['valor_tasa', 'tipo_tasa', 'tipo_tasa_efectiva', 'periodo_capitalizacion'];
-
-        camposParaTasa.forEach(campo => {
-          const control = this.form.get(campo);
-          if (control) {
-            control.valueChanges.subscribe(() => {
-              console.log(`Cambio detectado en ${campo} (modo edición)`);
-              // Solo calcular si periodo_capitalizacion está activo cuando es requerido
-              const tipoTasa = this.form.get('tipo_tasa')?.value;
-              const periodoCapControl = this.form.get('periodo_capitalizacion');
-
-              if (tipoTasa === 'NOMINAL' && !periodoCapControl?.disabled) {
-                this.calcularTasaEfectiva();
-                this.calcularTasaDescuento();
-              } else if (tipoTasa === 'EFECTIVA') {
-                this.calcularTasaEfectiva();
-                this.calcularTasaDescuento();
-              }
-            });
-          }
-        });
-
         // Observer para fecha de vencimiento
       this.form.get('fecha_vencimiento')?.valueChanges.subscribe((fecha) => {
         console.log('Nueva fecha de vencimiento (modo edición):', fecha);
         if (fecha && this.fechaDescuento) {
           this.calcularDiasDescuento(fecha);
+        }
+      });
+
+
+      const camposParaTasa = ['valor_tasa', 'tipo_tasa', 'tipo_tasa_efectiva', 'periodo_capitalizacion'];
+
+      camposParaTasa.forEach(campo => {
+        this.form.get(campo)?.valueChanges.subscribe(() => {
+          console.log(`Cambio detectado en ${campo}`);
+          const tipoTasa = this.form.get('tipo_tasa')?.value;
+          const periodoCapControl = this.form.get('periodo_capitalizacion');
+          const diasDescuento = this.form.get('dias_descuento')?.value;
+
+          // Verificar si deberíamos calcular basándonos en el estado actual
+          if (tipoTasa === 'NOMINAL') {
+            if (!periodoCapControl?.disabled && periodoCapControl?.value) {
+              console.log('Calculando con tasa NOMINAL - periodo_capitalizacion activo:', periodoCapControl?.value);
+              this.calcularTasaEfectiva();
+              // Solo calcular tasa de descuento si dias_descuento tiene un valor
+              if (diasDescuento !== null && diasDescuento !== undefined && diasDescuento !== '') {
+                console.log('Calculando tasa de descuento con días:', diasDescuento);
+                this.calcularTasaDescuento();
+              }
+            } else {
+              console.log('Periodo capitalización no válido para cálculo:', {
+                disabled: periodoCapControl?.disabled,
+                value: periodoCapControl?.value,
+                diasDescuento: diasDescuento
+              });
+            }
+          } else if (tipoTasa === 'EFECTIVA') {
+            console.log('Calculando con tasa EFECTIVA');
+            this.calcularTasaEfectiva();
+            // Solo calcular tasa de descuento si dias_descuento tiene un valor
+            if (diasDescuento !== null && diasDescuento !== undefined && diasDescuento !== '') {
+              console.log('Calculando tasa de descuento con días:', diasDescuento);
+              this.calcularTasaDescuento();
+            }
+          } else {
+            console.log('Tipo de tasa no válido para cálculo:', tipoTasa);
+          }
+        });
+      });
+
+      // Observador específico para dias_descuento
+      this.form.get('dias_descuento')?.valueChanges.subscribe((dias) => {
+        console.log('Cambio detectado en dias_descuento:', dias);
+        if (dias !== null && dias !== undefined && dias !== '') {
+          const tipoTasa = this.form.get('tipo_tasa')?.value;
+          const periodoCapControl = this.form.get('periodo_capitalizacion');
+          const tasaEfectivaCalculada = this.form.get('tasa_efectiva_calculada')?.value;
+
+          if (tasaEfectivaCalculada) {
+            if (tipoTasa === 'NOMINAL' && (!periodoCapControl?.disabled && periodoCapControl?.value)) {
+              console.log('Calculando tasa de descuento (NOMINAL) por cambio en días');
+              this.calcularTasaDescuento();
+            } else if (tipoTasa === 'EFECTIVA') {
+              console.log('Calculando tasa de descuento (EFECTIVA) por cambio en días');
+              this.calcularTasaDescuento();
+            }
+          }
         }
       });
 
