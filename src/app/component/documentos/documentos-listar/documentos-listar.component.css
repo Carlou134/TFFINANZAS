@@ -1,3 +1,26 @@
 table {
   width: 100%;
 }
+
+.cartera-info {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.cartera-info h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.cartera-info p {
+  margin: 8px 0;
+}
+
+.cartera-info strong {
+  color: #666;
+}
+
+.cartera-grid {
+  background-color: white;
+  padding: 15px;
+  border-radius: 4px;
+}

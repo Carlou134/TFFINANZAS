@@ -10,6 +10,8 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { Documentos } from '../../../models/Documentos';
 import { DocumentosService } from '../../../service/documentos.service';
+import { Cartera } from '../../../models/Cartera';
+import { CarteraService } from '../../../service/cartera.service';
 
 @Component({
   selector: 'app-documentos-listar',
@@ -36,13 +38,20 @@ export class DocumentosListarComponent implements OnInit {
     'accion01', 'accion02'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   cartera_id: number = 0; // Variable agregada para almacenar el ID
+  cartera: Cartera = new Cartera();
 
-  constructor(private tS: DocumentosService, private route: ActivatedRoute) {}
+  constructor(private tS: DocumentosService, private route: ActivatedRoute, private carteraService: CarteraService) {}
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {  // Cambiado de queryParams a params
       this.cartera_id = +params['id'];  // Cambiado de 'idCartera' a 'id'
       console.log(this.cartera_id);
+
+      // Obtener datos de la cartera
+      this.carteraService.listId(this.cartera_id).subscribe((data) => {
+        this.cartera = data;
+      });
+
       this.tS.listByCartera(this.cartera_id).subscribe((data) => {
         this.dataSource = new MatTableDataSource(data);
         this.dataSource.paginator = this.paginator;
