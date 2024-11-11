@@ -8,11 +8,12 @@ import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { Cartera } from '../../../models/Cartera';
-import { CarteraService } from '../../../service/cartera.service';
+import { ValorDolar } from '../../../models/ValorDolar';
+import { ValordolarService } from '../../../service/valordolar.service';
+
 
 @Component({
-  selector: 'app-cartera-listar',
+  selector: 'app-valor-dolar-listar',
   standalone: true,
   imports: [
     CommonModule,
@@ -23,25 +24,22 @@ import { CarteraService } from '../../../service/cartera.service';
     RouterModule,
     MatButtonModule
   ],
-  templateUrl: './cartera-listar.component.html',
-  styleUrl: './cartera-listar.component.css'
+  templateUrl: './valor-dolar-listar.component.html',
+  styleUrl: './valor-dolar-listar.component.css'
 })
-export class CarteraListarComponent implements OnInit {
-  dataSource: MatTableDataSource<Cartera> = new MatTableDataSource();
+export class ValorDolarListarComponent implements OnInit {
+  dataSource: MatTableDataSource<ValorDolar> = new MatTableDataSource();
   displayedColumns: string[] =
-  ['codigo', 'usuario', 'banco', 'fecha_descuento', 'tipo_moneda',
-    'valor_nominal', 'valor_neto', 'tcea', 'estado',
+  ['codigo', 'valor', 'fecha',
     'accion01', 'accion02'];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  constructor(private tS: CarteraService) {}
+  constructor(private tS: ValordolarService) {}
 
   ngOnInit(): void {
-    // Reemplazar this.tS.list() por this.tS.listMiCartera()
-    this.tS.listMiCartera().subscribe((data) => {
+    this.tS.list().subscribe((data) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
     });
-
     this.tS.getList().subscribe((data) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
@@ -49,9 +47,8 @@ export class CarteraListarComponent implements OnInit {
   }
 
   eliminar(id: number) {
-    this.tS.delete(id).subscribe(() => {
-      // También actualizar aquí para mantener consistencia
-      this.tS.listMiCartera().subscribe((data) => {
+    this.tS.delete(id).subscribe((data) => {
+      this.tS.list().subscribe((data) => {
         this.tS.setList(data);
       });
     });

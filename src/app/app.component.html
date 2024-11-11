@@ -2,6 +2,7 @@
   <mat-toolbar color="warn" *ngIf="verificar()">
     <mat-icon>menu</mat-icon>
     <button mat-button [matMenuTriggerFor]="menuBancos" *ngIf="validarRol()">Bancos</button>
+    <button mat-button [matMenuTriggerFor]="menuDolar" *ngIf="validarRol()">Dolares</button>
     <button mat-button [matMenuTriggerFor]="menuDeudores" *ngIf="validarRol()">Deudores</button>
     <button mat-button [matMenuTriggerFor]="menuCartera" *ngIf="validarRol()">Cartera</button>
     <button mat-button [matMenuTriggerFor]="menuDocumentos" *ngIf="validarRol()">Documentos</button>
@@ -13,6 +14,10 @@
   <!-- Modifica estas rutas y añade la navegación programática -->
   <mat-menu #menuBancos="matMenu">
     <button mat-menu-item (click)="router.navigate(['/components/bancos'])">Listar</button>
+  </mat-menu>
+
+  <mat-menu #menuDolar="matMenu">
+    <button mat-menu-item (click)="router.navigate(['/components/valor-dolar'])">Listar</button>
   </mat-menu>
 
   <mat-menu #menuDeudores="matMenu">
