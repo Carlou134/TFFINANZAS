@@ -298,26 +298,41 @@ export class DocumentosCreaEditaComponent implements OnInit {
       this.documentos.estado = this.form.value.estado;
 
       if (this.edicion) {
+        // Para edición: actualizar documento -> actualizar lista -> actualizar cálculos
         this.cS.update(this.documentos).subscribe(() => {
           this.cS.list().subscribe((data) => {
             this.cS.setList(data);
+            // Llamar a actualizarCalculos después de actualizar el documento
+            this.carteraService.actualizarCalculos(this.cartera_id).subscribe({
+              next: () => {
+                console.log('Cálculos actualizados exitosamente');
+                this.router.navigate(['../../'], { relativeTo: this.route });
+              },
+              error: (error) => {
+                console.error('Error al actualizar cálculos:', error);
+                this.mensaje = 'Error al actualizar los cálculos de la cartera.';
+              }
+            });
           });
         });
       } else {
+        // Para inserción: insertar documento -> actualizar lista -> actualizar cálculos
         this.cS.insert(this.documentos).subscribe((data) => {
           this.cS.list().subscribe((data) => {
             this.cS.setList(data);
+            // Llamar a actualizarCalculos después de insertar el documento
+            this.carteraService.actualizarCalculos(this.cartera_id).subscribe({
+              next: () => {
+                console.log('Cálculos actualizados exitosamente');
+                this.router.navigate(['../../', this.cartera_id], { relativeTo: this.route });
+              },
+              error: (error) => {
+                console.error('Error al actualizar cálculos:', error);
+                this.mensaje = 'Error al actualizar los cálculos de la cartera.';
+              }
+            });
           });
         });
-      }
-
-      if(this.edicion)
-      {
-        this.router.navigate(['../../'], { relativeTo: this.route });
-      }
-      else
-      {
-        this.router.navigate(['../../', this.cartera_id], { relativeTo: this.route });
       }
     } else {
       this.mensaje = 'Por favor complete todos los campos obligatorios.';

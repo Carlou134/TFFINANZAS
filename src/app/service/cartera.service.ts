@@ -79,4 +79,10 @@ export class CarteraService {
       headers: this.getHeaders()
     });
   }
+
+  actualizarCalculos(id: number) {
+    return this.http.put(`${this.url}/calculos/${id}`, null, {
+      headers: this.getHeaders()
+    });
+  }
 }
