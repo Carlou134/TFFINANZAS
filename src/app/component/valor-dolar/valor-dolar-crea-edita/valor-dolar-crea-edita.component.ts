@@ -53,10 +53,8 @@ export class ValorDolarCreaEditaComponent {
     this.form = this.formBuilder.group({
       id: [''],
       valor_dolar: ['', [
-        Validators.required,
-        Validators.pattern('^[0-9]*$'),  // Solo números
-      ]],
-      fecha_registro: [null, Validators.required],
+        Validators.required]],
+      fecha_registro: [null, ''],
     });
   }
 
