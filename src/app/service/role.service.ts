@@ -1,6 +1,6 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { Role } from '../models/Role';
@@ -29,6 +29,12 @@ export class RoleService {
       .set('Content-Type', 'application/json');
   }
 
+    // Headers sin autorización para endpoints públicos
+    private getPublicHeaders(): HttpHeaders {
+      return new HttpHeaders()
+        .set('Content-Type', 'application/json');
+    }
+
   list() {
     return this.http.get<Role[]>(this.url, {
       headers: this.getHeaders()
@@ -38,6 +44,13 @@ export class RoleService {
   insert(ca: Role) {
     return this.http.post(this.url, ca, {
       headers: this.getHeaders()
+    });
+  }
+
+  // Nuevo método para registro público
+  register(roles: Role): Observable<any> {
+    return this.http.post(this.url, roles, {
+      headers: this.getPublicHeaders()
     });
   }
 

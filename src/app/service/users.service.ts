@@ -1,6 +1,6 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { Users } from '../models/Users';
@@ -29,6 +29,12 @@ export class UsersService {
       .set('Content-Type', 'application/json');
   }
 
+  // Headers sin autorización para endpoints públicos
+  private getPublicHeaders(): HttpHeaders {
+    return new HttpHeaders()
+      .set('Content-Type', 'application/json');
+  }
+
   list() {
     return this.http.get<Users[]>(this.url, {
       headers: this.getHeaders()
@@ -38,6 +44,13 @@ export class UsersService {
   insert(ca: Users) {
     return this.http.post(this.url, ca, {
       headers: this.getHeaders()
+    });
+  }
+
+  // Nuevo método para registro público
+  register(user: Users): Observable<any> {
+    return this.http.post(this.url, user, {
+      headers: this.getPublicHeaders()
     });
   }
 
@@ -63,6 +76,12 @@ export class UsersService {
 
   delete(id: number) {
     return this.http.delete(`${this.url}/${id}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  searchByUsername(username: string): Observable<Users[]> {
+    return this.http.get<Users[]>(`${this.url}/buscar/${username}`, {
       headers: this.getHeaders()
     });
   }
