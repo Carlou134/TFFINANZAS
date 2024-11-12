@@ -28,11 +28,17 @@ export class CarteraDocumentosListarComponent implements OnInit {
   constructor(private tS: CarteraService) {}
 
   ngOnInit(): void {
-    this.tS.listMiCartera().subscribe((data) => {
-      this.carteras = data;
-    });
+    this.loadCarteraData();
 
-    this.tS.getList().subscribe((data) => {
+    // Suscribirse a los cambios
+    this.tS.getList().subscribe(() => {
+      // Cuando hay cambios, volver a cargar solo las carteras del usuario
+      this.loadCarteraData();
+    });
+  }
+
+  loadCarteraData() {
+    this.tS.listMiCartera().subscribe((data) => {
       this.carteras = data;
     });
   }

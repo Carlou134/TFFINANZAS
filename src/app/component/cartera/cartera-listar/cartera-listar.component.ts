@@ -36,13 +36,17 @@ export class CarteraListarComponent implements OnInit {
   constructor(private tS: CarteraService) {}
 
   ngOnInit(): void {
-    // Reemplazar this.tS.list() por this.tS.listMiCartera()
-    this.tS.listMiCartera().subscribe((data) => {
-      this.dataSource = new MatTableDataSource(data);
-      this.dataSource.paginator = this.paginator;
-    });
+    this.loadCarteraData();
 
-    this.tS.getList().subscribe((data) => {
+    // Suscribirse a los cambios
+    this.tS.getList().subscribe(() => {
+      // Cuando hay cambios, volver a cargar solo las carteras del usuario
+      this.loadCarteraData();
+    });
+  }
+
+  loadCarteraData() {
+    this.tS.listMiCartera().subscribe((data) => {
       this.dataSource = new MatTableDataSource(data);
       this.dataSource.paginator = this.paginator;
     });
