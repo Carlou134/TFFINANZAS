@@ -16,8 +16,13 @@ import { RoleComponent } from './role/role.component';
 import { RoleCreaEditaComponent } from './role/role-crea-edita/role-crea-edita.component';
 import { ValorDolarComponent } from './valor-dolar/valor-dolar.component';
 import { ValorDolarCreaEditaComponent } from './valor-dolar/valor-dolar-crea-edita/valor-dolar-crea-edita.component';
+import { PaginaPrincipalComponent } from './pagina-principal/pagina-principal.component';
 
 const routes: Routes = [
+  {
+    path: 'pagina-principal',
+    component: PaginaPrincipalComponent
+  },
   {
     path: 'cartera',
     component: CarteraComponent,

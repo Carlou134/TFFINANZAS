@@ -1,0 +1,59 @@
+/* app.component.css */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+mat-icon {
+  cursor: pointer;
+}
+
+mat-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+.main-container {
+  margin-top: 64px; /* Altura del toolbar */
+  flex: 1;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+@media (max-width: 600px) {
+  .main-container {
+    margin-top: 56px; /* Altura del toolbar en móviles */
+  }
+}
+
+/* Estilos para el toolbar */
+mat-toolbar {
+  display: flex;
+  gap: 1rem;
+}
+
+mat-toolbar button {
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Ajustes para el contenido del router-outlet */
+router-outlet + * {
+  display: block;
+  width: 100%;
+}
+
+/* Mejoras visuales para los menús */
+.mat-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mat-menu-item mat-icon {
+  margin-right: 8px;
+}

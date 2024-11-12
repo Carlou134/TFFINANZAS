@@ -1,6 +1,6 @@
 <div>
   <mat-toolbar color="warn" *ngIf="verificar()">
-    <mat-icon>menu</mat-icon>
+    <mat-icon (click)="router.navigate(['/components/pagina-principal'])">menu</mat-icon>
     <button mat-button [matMenuTriggerFor]="menuBancos" *ngIf="validarRol()">Bancos</button>
     <button mat-button [matMenuTriggerFor]="menuDolar" *ngIf="validarRol()">Dolares</button>
     <button mat-button [matMenuTriggerFor]="menuDeudores" *ngIf="validarRol()">Deudores</button>
@@ -52,4 +52,6 @@
   </mat-menu>
 </div>
 
-<router-outlet></router-outlet>
+<div class="main-container">
+  <router-outlet></router-outlet>
+</div>
