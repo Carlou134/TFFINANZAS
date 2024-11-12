@@ -54,8 +54,16 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Verifica el estado de autenticación al iniciar
-    this.checkAuthStatus();
+    // Solo verificamos autenticación si no estamos en rutas públicas
+    if (!this.isPublicRoute()) {
+      this.checkAuthStatus();
+    }
+  }
+
+  private isPublicRoute(): boolean {
+    const currentPath = this.router.url;
+    const publicRoutes = ['/', '/home', '/login', '/register'];
+    return publicRoutes.includes(currentPath);
   }
 
   private checkAuthStatus() {

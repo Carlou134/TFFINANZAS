@@ -16,13 +16,8 @@ import { RoleComponent } from './role/role.component';
 import { RoleCreaEditaComponent } from './role/role-crea-edita/role-crea-edita.component';
 import { ValorDolarComponent } from './valor-dolar/valor-dolar.component';
 import { ValorDolarCreaEditaComponent } from './valor-dolar/valor-dolar-crea-edita/valor-dolar-crea-edita.component';
-import { CrearCuentaComponent } from './login/crear-cuenta/crear-cuenta.component';
 
 const routes: Routes = [
-  {
-    path: 'crear-cuenta',
-    component: CrearCuentaComponent
-  },
   {
     path: 'cartera',
     component: CarteraComponent,
