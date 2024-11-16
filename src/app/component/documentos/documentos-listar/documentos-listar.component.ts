@@ -44,34 +44,34 @@ export class DocumentosListarComponent implements OnInit {
 
   constructor(private tS: DocumentosService, private route: ActivatedRoute, private carteraService: CarteraService) {}
 
-  ngOnInit(): void {
-    this.route.params.subscribe(params => {  // Cambiado de queryParams a params
-      this.cartera_id = +params['id'];  // Cambiado de 'idCartera' a 'id'
-      console.log(this.cartera_id);
-
-      // Obtener datos de la cartera
-      this.carteraService.listId(this.cartera_id).subscribe((data) => {
-        this.cartera = data;
-      });
-
-      this.tS.listByCartera(this.cartera_id).subscribe((data) => {
-        this.dataSource = new MatTableDataSource(data);
-        this.dataSource.paginator = this.paginator;
-      });
+  actualizarDatos() {
+    // Actualizar datos de la cartera
+    this.carteraService.listId(this.cartera_id).subscribe((carteraData) => {
+      this.cartera = carteraData;
     });
 
-    this.tS.getList().subscribe((data) => {
-      this.dataSource = new MatTableDataSource(data);
+    // Actualizar lista de documentos
+    this.tS.listByCartera(this.cartera_id).subscribe((documentosData) => {
+      this.dataSource = new MatTableDataSource(documentosData);
       this.dataSource.paginator = this.paginator;
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.params.subscribe(params => {
+      this.cartera_id = +params['id'];
+      this.actualizarDatos();
+    });
+
+    // Suscribirse a cambios en la lista
+    this.tS.getList().subscribe(() => {
+      this.actualizarDatos();
     });
   }
 
   eliminar(id: number) {
     this.tS.delete(id).subscribe(() => {
-      // Usamos el cartera_id almacenado
-      this.tS.listByCartera(this.cartera_id).subscribe((data) => {
-        this.tS.setList(data);
-      });
+      this.actualizarDatos();
     });
   }
 

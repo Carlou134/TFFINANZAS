@@ -53,7 +53,9 @@
         </button>
     </div>
 
-    <div class="table-container">
+    <br>
+
+    <div class="table-container" style="width: 100%; overflow-x: auto;">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
         <!--- Note that these columns can be defined in any order.
@@ -185,11 +187,8 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
-      <mat-paginator
-      [pageSizeOptions]="[5, 10, 25, 100]"
-      showFirstLastButtons
-    ></mat-paginator>
-    </div>
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+  </div>
   </div>
 </body>
 </html>

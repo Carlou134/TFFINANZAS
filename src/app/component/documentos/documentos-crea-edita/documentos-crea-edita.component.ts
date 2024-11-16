@@ -302,17 +302,16 @@ export class DocumentosCreaEditaComponent implements OnInit {
       this.documentos.estado = this.form.value.estado;
 
       if (this.edicion) {
-        // Para edición
         this.cS.update(this.documentos).subscribe(() => {
-          // Actualizar solo los documentos de la cartera actual
           this.cS.listByCartera(this.cartera_id).subscribe((data) => {
-            this.cS.setList(data);
-            // Actualizar cálculos después de actualizar el documento
+            this.cS.setList(data); // Esto disparará la actualización en el componente de lista
             this.carteraService.actualizarCalculos(this.cartera_id).subscribe({
               next: () => {
-                console.log('Cálculos actualizados exitosamente');
-                // Navegar de vuelta a la lista de documentos de la cartera específica
-                this.router.navigate(['../../', this.cartera_id], { relativeTo: this.route });
+                // Asegurarse de que la lista esté actualizada antes de navegar
+                this.cS.listByCartera(this.cartera_id).subscribe((updatedData) => {
+                  this.cS.setList(updatedData);
+                  this.router.navigate(['../../', this.cartera_id], { relativeTo: this.route });
+                });
               },
               error: (error) => {
                 console.error('Error al actualizar cálculos:', error);
@@ -321,18 +320,19 @@ export class DocumentosCreaEditaComponent implements OnInit {
             });
           });
         });
-      } else {
-        // Para inserción
+      }
+      // Y en la parte de inserción:
+      else {
         this.cS.insert(this.documentos).subscribe(() => {
-          // Actualizar solo los documentos de la cartera actual
           this.cS.listByCartera(this.cartera_id).subscribe((data) => {
-            this.cS.setList(data);
-            // Actualizar cálculos después de insertar el documento
+            this.cS.setList(data); // Esto disparará la actualización en el componente de lista
             this.carteraService.actualizarCalculos(this.cartera_id).subscribe({
               next: () => {
-                console.log('Cálculos actualizados exitosamente');
-                // Navegar de vuelta a la lista de documentos de la cartera específica
-                this.router.navigate(['../../', this.cartera_id], { relativeTo: this.route });
+                // Asegurarse de que la lista esté actualizada antes de navegar
+                this.cS.listByCartera(this.cartera_id).subscribe((updatedData) => {
+                  this.cS.setList(updatedData);
+                  this.router.navigate(['../../', this.cartera_id], { relativeTo: this.route });
+                });
               },
               error: (error) => {
                 console.error('Error al actualizar cálculos:', error);

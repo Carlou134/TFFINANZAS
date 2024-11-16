@@ -1,5 +1,51 @@
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+  max-height: calc(100vh - 300px); /* Ajusta este valor según necesites */
+}
+
 table {
   width: 100%;
+  min-width: 1500px; /* Ajusta este valor según el ancho mínimo que necesites */
+}
+
+.mat-elevation-z8 {
+  box-shadow: none;
+}
+
+/* Para mantener el encabezado visible al hacer scroll horizontal */
+th {
+  background: white;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* Estilo opcional para mejorar la apariencia */
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Asegurar que el paginador se mantenga visible */
+mat-paginator {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  z-index: 1;
 }
 
 .cartera-info {
