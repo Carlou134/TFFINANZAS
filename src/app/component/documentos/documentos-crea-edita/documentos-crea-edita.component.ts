@@ -94,6 +94,22 @@ export class DocumentosCreaEditaComponent implements OnInit {
     private carteraService: CarteraService
   ) {}
 
+  private actualizarEstadoPeriodoCapitalizacion(tipoTasa: string): void {
+    const periodoCapControl = this.form.get('periodo_capitalizacion');
+
+    if (tipoTasa === 'NOMINAL') {
+      periodoCapControl?.enable();
+      periodoCapControl?.setValidators([Validators.required]);
+      console.log('periodo_capitalizacion habilitado');
+    } else {
+      periodoCapControl?.disable();
+      periodoCapControl?.clearValidators();
+      periodoCapControl?.setValue('');
+      console.log('periodo_capitalizacion deshabilitado');
+    }
+    periodoCapControl?.updateValueAndValidity();
+  }
+
   ngOnInit(): void {
     this.route.queryParams.subscribe(queryParams => {
       if (queryParams['cartera_id']) {
@@ -169,19 +185,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
     // Observador para tipo_tasa
     this.form.get('tipo_tasa')?.valueChanges.subscribe((valor) => {
       console.log('Cambio en tipo_tasa:', valor);
-      const periodoCapControl = this.form.get('periodo_capitalizacion');
-
-      if (valor === 'NOMINAL') {
-        periodoCapControl?.enable();
-        periodoCapControl?.setValidators([Validators.required]);
-        console.log('periodo_capitalizacion habilitado');
-      } else {
-        periodoCapControl?.disable();
-        periodoCapControl?.clearValidators();
-        periodoCapControl?.setValue('');
-        console.log('periodo_capitalizacion deshabilitado');
-      }
-      periodoCapControl?.updateValueAndValidity();
+      this.actualizarEstadoPeriodoCapitalizacion(valor);
     });
 
     // Observadores para cálculos de tasa
@@ -272,7 +276,7 @@ export class DocumentosCreaEditaComponent implements OnInit {
   aceptar(): void {
     if (this.form.valid) {
       this.documentos.id = this.form.value.id;
-      this.documentos.cartera.id = this.cartera_id; // Asignamos el cartera_id al documento
+      this.documentos.cartera.id = this.cartera_id;
       this.documentos.deudor.id = this.form.value.deudor;
       this.documentos.tipo = this.form.value.tipo;
       this.documentos.numero_documento = this.form.value.numero_documento;
@@ -298,15 +302,17 @@ export class DocumentosCreaEditaComponent implements OnInit {
       this.documentos.estado = this.form.value.estado;
 
       if (this.edicion) {
-        // Para edición: actualizar documento -> actualizar lista -> actualizar cálculos
+        // Para edición
         this.cS.update(this.documentos).subscribe(() => {
-          this.cS.list().subscribe((data) => {
+          // Actualizar solo los documentos de la cartera actual
+          this.cS.listByCartera(this.cartera_id).subscribe((data) => {
             this.cS.setList(data);
-            // Llamar a actualizarCalculos después de actualizar el documento
+            // Actualizar cálculos después de actualizar el documento
             this.carteraService.actualizarCalculos(this.cartera_id).subscribe({
               next: () => {
                 console.log('Cálculos actualizados exitosamente');
-                this.router.navigate(['../../'], { relativeTo: this.route });
+                // Navegar de vuelta a la lista de documentos de la cartera específica
+                this.router.navigate(['../../', this.cartera_id], { relativeTo: this.route });
               },
               error: (error) => {
                 console.error('Error al actualizar cálculos:', error);
@@ -316,14 +322,16 @@ export class DocumentosCreaEditaComponent implements OnInit {
           });
         });
       } else {
-        // Para inserción: insertar documento -> actualizar lista -> actualizar cálculos
-        this.cS.insert(this.documentos).subscribe((data) => {
-          this.cS.list().subscribe((data) => {
+        // Para inserción
+        this.cS.insert(this.documentos).subscribe(() => {
+          // Actualizar solo los documentos de la cartera actual
+          this.cS.listByCartera(this.cartera_id).subscribe((data) => {
             this.cS.setList(data);
-            // Llamar a actualizarCalculos después de insertar el documento
+            // Actualizar cálculos después de insertar el documento
             this.carteraService.actualizarCalculos(this.cartera_id).subscribe({
               next: () => {
                 console.log('Cálculos actualizados exitosamente');
+                // Navegar de vuelta a la lista de documentos de la cartera específica
                 this.router.navigate(['../../', this.cartera_id], { relativeTo: this.route });
               },
               error: (error) => {
@@ -576,7 +584,9 @@ export class DocumentosCreaEditaComponent implements OnInit {
           estado: new FormControl(data.estado),
         });
 
-        // Observer para fecha de vencimiento
+        this.actualizarEstadoPeriodoCapitalizacion(data.tipo_tasa);
+
+      // Observer para fecha de vencimiento
       this.form.get('fecha_vencimiento')?.valueChanges.subscribe((fecha) => {
         console.log('Nueva fecha de vencimiento (modo edición):', fecha);
         if (fecha && this.fechaDescuento) {
