@@ -147,52 +147,57 @@ export class DocumentosListarComponent implements OnInit {
     doc.setFont('helvetica', 'normal');
 
     const rows = this.dataSource.data.map(doc => [
-        Number(doc.valor_nominal).toLocaleString('es-PE', {minimumFractionDigits: 2}),
-        Number(doc.tasa_descuento).toFixed(4),
-        doc.tipo_tasa,
-        doc.dias_descuento,
-        doc.periodo_capitalizacion || '-',
-        Number(doc.tasa_efectiva_calculada).toFixed(4),
-        Number(doc.portes + doc.comision_estudios + doc.comision_desembolso + doc.comision_cobranza + doc.igv).toLocaleString('es-PE', {minimumFractionDigits: 2}),
-        Number(doc.valor_neto).toLocaleString('es-PE', {minimumFractionDigits: 2}),
-        doc.estado
-    ]);
+      doc.id,                    // Código
+      doc.numero_documento,      // Código-factura
+      Number(doc.valor_nominal).toLocaleString('es-PE', {minimumFractionDigits: 2}),
+      Number(doc.tasa_descuento).toFixed(4),
+      doc.tipo_tasa,
+      doc.dias_descuento,
+      doc.periodo_capitalizacion || '-',
+      Number(doc.tasa_efectiva_calculada).toFixed(4),
+      Number(doc.portes + doc.comision_estudios + doc.comision_desembolso + doc.comision_cobranza + doc.igv).toLocaleString('es-PE', {minimumFractionDigits: 2}),
+      Number(doc.valor_neto).toLocaleString('es-PE', {minimumFractionDigits: 2}),
+      doc.estado
+  ]);
 
-    autoTable(doc, {
-      startY: y + 15,
-      head: [[
-          'Valor Nominal', 'Tasa Desc.', 'Tipo Tasa', 'Días Desc.',
-          'Per. Cap.', 'Tasa Efec.', 'Comisiones', 'Valor Neto', 'Estado'
-      ]],
-      body: rows,
-      theme: 'striped',
-      styles: {
-          fontSize: 8,
-          cellWidth: 'auto',
-          cellPadding: 2
-      },
-      columnStyles: {
-          0: { halign: 'right', cellWidth: 25 },  // Valor Nominal
-          1: { halign: 'right', cellWidth: 20 },  // Tasa Descuento
-          2: { halign: 'center', cellWidth: 20 }, // Tipo Tasa
-          3: { halign: 'right', cellWidth: 20 },  // Días Descuento
-          4: { halign: 'center', cellWidth: 20 }, // Per. Cap.
-          5: { halign: 'right', cellWidth: 20 },  // Tasa Efectiva
-          6: { halign: 'right', cellWidth: 25 },  // Comisiones
-          7: { halign: 'right', cellWidth: 25 },  // Valor Neto
-          8: { halign: 'center', cellWidth: 25 }  // Estado
-      },
-      headStyles: {
-          fillColor: [66, 66, 66],
-          halign: 'center',
-          fontSize: 8
-      },
-      // Asegurar que la tabla se ajuste al ancho de la página
-      tableWidth: 'auto',
-      margin: { left: 14 } // Alinear con el resto del contenido
+  autoTable(doc, {
+    startY: y + 15,
+    head: [[
+        'Código', 'Nro. Documento', 'Valor Nominal', 'Tasa Desc.',
+        'Tipo Tasa', 'Días Desc.', 'Per. Cap.', 'Tasa Efec.',
+        'Comisiones', 'Valor Neto', 'Estado'
+    ]],
+    body: rows,
+    theme: 'striped',
+    styles: {
+        fontSize: 8,
+        cellWidth: 'auto',
+        cellPadding: 2
+    },
+    columnStyles: {
+        0: { halign: 'center', cellWidth: 15 },  // Código
+        1: { halign: 'center', cellWidth: 25 },  // Nro. Documento
+        2: { halign: 'right', cellWidth: 25 },   // Valor Nominal
+        3: { halign: 'right', cellWidth: 20 },   // Tasa Descuento
+        4: { halign: 'center', cellWidth: 20 },  // Tipo Tasa
+        5: { halign: 'right', cellWidth: 20 },   // Días Descuento
+        6: { halign: 'center', cellWidth: 20 },  // Per. Cap.
+        7: { halign: 'right', cellWidth: 20 },   // Tasa Efectiva
+        8: { halign: 'right', cellWidth: 25 },   // Comisiones
+        9: { halign: 'right', cellWidth: 25 },   // Valor Neto
+        10: { halign: 'center', cellWidth: 25 }  // Estado
+    },
+    headStyles: {
+        fillColor: [66, 66, 66],
+        halign: 'center',
+        fontSize: 8
+    },
+    // Asegurar que la tabla se ajuste al ancho de la página
+    tableWidth: 'auto',
+    margin: { left: 14 } // Alinear con el resto del contenido
   });
 
-    // Guardar el PDF
-    doc.save(`Cartera_${this.cartera_id}_${new Date().toISOString().split('T')[0]}.pdf`);
+  // Guardar el PDF
+  doc.save(`Cartera_${this.cartera_id}_${new Date().toISOString().split('T')[0]}.pdf`);
 }
 }

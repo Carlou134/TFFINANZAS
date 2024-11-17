@@ -93,6 +93,7 @@
           <input matInput [matDatepicker]="pickerVencimiento"
                 formControlName="fecha_vencimiento"
                 [min]="minFecha"
+                [max]="fechaDescuento"
                 placeholder="Seleccione una fecha">
           <mat-datepicker-toggle matSuffix [for]="pickerVencimiento"></mat-datepicker-toggle>
           <mat-datepicker #pickerVencimiento></mat-datepicker>
