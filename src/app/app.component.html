@@ -41,13 +41,24 @@
   </mat-menu>
 
   <mat-menu #menuSalir="matMenu">
-    <button mat-menu-item (click)="cerrar()">
-      <mat-icon>logout</mat-icon>
-      <span>Cerrar sesión</span>
+    <button mat-menu-item>
+      <mat-icon>manage_accounts</mat-icon>
+      <span>Actualizar información</span>
     </button>
+
+    <button mat-menu-item (click)="router.navigate(['/components/soporte-tecnico'])">
+      <mat-icon>help</mat-icon>
+      <span>¿Necesitas ayuda?</span>
+    </button>
+
     <button mat-menu-item>
       Rol:
       <span>{{ role }}</span>
+    </button>
+
+    <button mat-menu-item (click)="cerrar()">
+      <mat-icon>logout</mat-icon>
+      <span>Cerrar sesión</span>
     </button>
   </mat-menu>
 </div>

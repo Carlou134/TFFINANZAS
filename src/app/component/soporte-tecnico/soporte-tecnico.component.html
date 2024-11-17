@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="support-container">
+    <section class="manual-section">
+      <h2>Manual de Usuario</h2>
+      <div class="drive-embed">
+        <!-- Reemplazar URL_DEL_DRIVE con la URL real del manual en Drive -->
+        <iframe
+          src="URL_DEL_DRIVE"
+          width="100%"
+          height="500px"
+          frameborder="0">
+        </iframe>
+      </div>
+    </section>
+
+    <section class="contact-section">
+      <div class="support-content">
+        <!-- Lista de Contactos -->
+        <div class="team-list">
+          <h2>Equipo de Soporte</h2>
+          <div class="team-grid">
+            <div class="team-member" *ngFor="let member of teamMembers">
+              <div class="member-avatar">
+                {{ member.nombre.charAt(0) }}
+              </div>
+              <div class="member-info">
+                <h3>{{ member.nombre }}</h3>
+                <p class="cargo">{{ member.cargo }}</p>
+                <p class="email">{{ member.email }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulario de Contacto -->
+        <div class="contact-form-container">
+          <h2>¿Problemas técnicos? Contáctanos</h2>
+
+          <div class="success-message" *ngIf="mensajeEnviado">
+            ¡Mensaje enviado! Ya estamos revisando tu problema.
+          </div>
+
+          <div class="contact-form">
+            <form [formGroup]="supportForm" (ngSubmit)="onSubmit()">
+              <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input
+                  type="text"
+                  id="nombre"
+                  formControlName="nombre"
+                  class="form-control"
+                  [ngClass]="{'invalid': supportForm.get('nombre')?.invalid && supportForm.get('nombre')?.touched}">
+              </div>
+
+              <div class="form-group">
+                <label for="email">Tu correo electrónico:</label>
+                <input
+                  type="email"
+                  id="email"
+                  formControlName="email"
+                  class="form-control"
+                  [ngClass]="{'invalid': supportForm.get('email')?.invalid && supportForm.get('email')?.touched}">
+              </div>
+
+              <div class="form-group">
+                <label for="destinatario">Enviar a:</label>
+                <select
+                  id="destinatario"
+                  formControlName="destinatario"
+                  class="form-control"
+                  [ngClass]="{'invalid': supportForm.get('destinatario')?.invalid && supportForm.get('destinatario')?.touched}">
+                  <option value="">Selecciona un destinatario</option>
+                  <option *ngFor="let member of teamMembers" [value]="member.email">
+                    {{member.nombre}} - {{member.cargo}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="problema">Describe tu problema:</label>
+                <textarea
+                  id="problema"
+                  formControlName="problema"
+                  class="form-control"
+                  rows="5"
+                  [ngClass]="{'invalid': supportForm.get('problema')?.invalid && supportForm.get('problema')?.touched}">
+                </textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="submit-btn"
+                [disabled]="!supportForm.valid">
+                Enviar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

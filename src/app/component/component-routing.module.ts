@@ -17,6 +17,7 @@ import { RoleCreaEditaComponent } from './role/role-crea-edita/role-crea-edita.c
 import { ValorDolarComponent } from './valor-dolar/valor-dolar.component';
 import { ValorDolarCreaEditaComponent } from './valor-dolar/valor-dolar-crea-edita/valor-dolar-crea-edita.component';
 import { PaginaPrincipalComponent } from './pagina-principal/pagina-principal.component';
+import { SoporteTecnicoComponent } from './soporte-tecnico/soporte-tecnico.component';
 
 const routes: Routes = [
   {
@@ -85,6 +86,10 @@ const routes: Routes = [
       { path: 'nuevo', component: ValorDolarCreaEditaComponent },
       { path: 'valor-dolar/:id', component: ValorDolarCreaEditaComponent }
     ]
+  },
+  {
+    path: 'soporte-tecnico',
+    component: SoporteTecnicoComponent
   }
   // Aquí puedes agregar más rutas al mismo nivel que tasas
 ];
