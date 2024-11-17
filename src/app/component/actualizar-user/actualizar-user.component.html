@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container" style="text-align: center">
+      <h2>Actualización de Datos de Usuario</h2>
+      <form [formGroup]="form" (submit)="actualizar()" class="example-form">
+        <!-- Username como campo de solo lectura -->
+        <mat-form-field class="example-full-width">
+          <mat-label>Usuario</mat-label>
+          <input matInput placeholder="Username" formControlName="username" readonly />
+          <mat-hint>El nombre de usuario no puede ser modificado</mat-hint>
+        </mat-form-field>
+
+        <br />
+        <!-- Contraseña opcional para actualización -->
+        <mat-form-field class="example-full-width">
+          <mat-label>Nueva Contraseña (opcional)</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'"
+                 formControlName="password">
+          <button mat-icon-button matSuffix
+                  (click)="hidePassword = !hidePassword"
+                  [attr.aria-label]="'Ocultar contraseña'"
+                  [attr.aria-pressed]="hidePassword"
+                  type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-hint>Deja en blanco para mantener la contraseña actual</mat-hint>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Razón Social</mat-label>
+          <input
+            matInput
+            placeholder="Razón Social"
+            formControlName="razon_social"
+          />
+          <mat-error
+            *ngIf="obtenerControlCampo('razon_social')?.errors?.['required']"
+          >
+            La razón social es obligatoria.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>RUC</mat-label>
+          <input
+            matInput
+            placeholder="RUC"
+            formControlName="ruc"
+          />
+          <mat-error
+            *ngIf="obtenerControlCampo('ruc')?.errors?.['required']"
+          >
+            El RUC es obligatorio.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Dirección</mat-label>
+          <input
+            matInput
+            placeholder="Dirección"
+            formControlName="direccion"
+          />
+          <mat-error
+            *ngIf="obtenerControlCampo('direccion')?.errors?.['required']"
+          >
+            La dirección es obligatoria.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <mat-form-field class="example-full-width">
+          <mat-label>Correo Electrónico</mat-label>
+          <input
+            matInput
+            placeholder="Email"
+            formControlName="email"
+            type="email"
+          />
+          <mat-error
+            *ngIf="obtenerControlCampo('email')?.errors?.['required']"
+          >
+            El email es obligatorio.
+          </mat-error>
+          <mat-error
+            *ngIf="obtenerControlCampo('email')?.errors?.['email']"
+          >
+            Por favor, ingrese un email válido.
+          </mat-error>
+        </mat-form-field>
+
+        <br />
+        <div class="button-container">
+          <button mat-raised-button color="primary">Actualizar</button>
+          <button mat-raised-button color="warn" routerLink="/components/pagina-principal">
+            Cancelar
+          </button>
+        </div>
+
+        <!-- Mensaje de error/éxito -->
+        <div class="message-container" *ngIf="mensaje">
+          <mat-error *ngIf="mensaje.includes('Error')">{{ mensaje }}</mat-error>
+          <div class="success-message" *ngIf="!mensaje.includes('Error')">{{ mensaje }}</div>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

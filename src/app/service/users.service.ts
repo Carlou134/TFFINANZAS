@@ -85,4 +85,10 @@ export class UsersService {
       headers: this.getHeaders()
     });
   }
+
+  getCurrentUser(): Observable<Users> {
+    return this.http.get<Users>(`${this.url}/usuario/actual`, {
+      headers: this.getHeaders()
+    });
+  }
 }

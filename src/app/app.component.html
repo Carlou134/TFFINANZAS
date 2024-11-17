@@ -41,7 +41,7 @@
   </mat-menu>
 
   <mat-menu #menuSalir="matMenu">
-    <button mat-menu-item>
+    <button mat-menu-item (click)="router.navigate(['/components/actualizar-informacion'])">
       <mat-icon>manage_accounts</mat-icon>
       <span>Actualizar información</span>
     </button>

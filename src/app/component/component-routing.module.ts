@@ -18,6 +18,7 @@ import { ValorDolarComponent } from './valor-dolar/valor-dolar.component';
 import { ValorDolarCreaEditaComponent } from './valor-dolar/valor-dolar-crea-edita/valor-dolar-crea-edita.component';
 import { PaginaPrincipalComponent } from './pagina-principal/pagina-principal.component';
 import { SoporteTecnicoComponent } from './soporte-tecnico/soporte-tecnico.component';
+import { ActualizarUserComponent } from './actualizar-user/actualizar-user.component';
 
 const routes: Routes = [
   {
@@ -90,6 +91,10 @@ const routes: Routes = [
   {
     path: 'soporte-tecnico',
     component: SoporteTecnicoComponent
+  },
+  {
+    path: 'actualizar-informacion',
+    component: ActualizarUserComponent
   }
   // Aquí puedes agregar más rutas al mismo nivel que tasas
 ];
